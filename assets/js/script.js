@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hero Text Fade In (Play on load)
     gsap.fromTo(".gsap-hero", 
-        { y: 30, autoAlpha: 0 }, 
+        { y: 20, autoAlpha: 0 }, 
         { y: 0, autoAlpha: 1, duration: 1, stagger: 0.2, ease: "power3.out", delay: 0.2 }
     );
 
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // General Fade Up Animation
     gsap.utils.toArray('.gsap-fade').forEach(element => {
         gsap.fromTo(element, 
-            { y: 40, autoAlpha: 0 },
+            { y: 30, autoAlpha: 0 },
             {
                 y: 0, 
                 autoAlpha: 1, 
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const items = document.querySelectorAll(`${section.container} ${section.items}`);
         if(items.length > 0) {
             gsap.fromTo(items, 
-                { y: 50, autoAlpha: 0 },
+                { y: 30, autoAlpha: 0 },
                 {
                     y: 0,
                     autoAlpha: 1,
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if(slideRight && slideLeft) {
         gsap.fromTo(slideRight,
-            { x: -50, autoAlpha: 0 },
+            { x: -30, autoAlpha: 0 },
             {
                 x: 0, autoAlpha: 1, duration: 1, ease: "power2.out",
                 scrollTrigger: {
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         );
         gsap.fromTo(slideLeft,
-            { x: 50, autoAlpha: 0 },
+            { x: 30, autoAlpha: 0 },
             {
                 x: 0, autoAlpha: 1, duration: 1, ease: "power2.out",
                 scrollTrigger: {
