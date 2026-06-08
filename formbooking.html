@@ -39,6 +39,7 @@
             <ul class="nav-links" id="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="portofolio.html">Gallery</a></li>
+                <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="formbooking.html" class="btn-nav active">Booking</a></li>
             </ul>
@@ -81,8 +82,8 @@
                     </div>
 
                     <p class="form-desc-2">
-                        Transfer Rekening <strong>BANK BNI</strong> atas nama <strong>RENGGI ANDIKA PUTRA</strong><br>
-                        <span id="rekeningNumber">117 214 8284</span><br>
+                        Transfer Rekening <strong>SEABANK</strong> atas nama <strong>RENGGI ANDIKA PUTRA</strong><br>
+                        <span id="rekeningNumber">9014 4503 3316</span><br>
                         <button type="button" class="btn-copy-rekening" onclick="copyRekening()">Copy Rekening</button>
                     </p>
 
@@ -164,7 +165,7 @@
                                         <input class="form-check-input" type="radio" name="jenisAcara" id="ngunduhMantu"
                                             value="ngunduh-mantu" onchange="showPackages('ngunduh-mantu')">
                                         <label class="form-check-label" for="ngunduhMantu">
-                                            Ngunduh Mantu
+                                            Ngunduh Mantu - Tilikan Manten
                                         </label>
                                     </div>
                                     <div class="form-check" onclick="selectRadio('engagement')">
@@ -204,6 +205,17 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
+                                    <label class="form-label fw-bold">Special Wedding Package</label>
+                                    <div class="form-check" onclick="selectRadio('weddingBahagiaPackages')">
+                                        <input class="form-check-input" type="radio" name="paket"
+                                            id="weddingBahagiaPackages" value="wedding-bahagia-packages">
+                                        <label class="form-check-label" for="weddingBahagiaPackages">
+                                            Bahagia Photo & Video
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
                                     <label class="form-label fw-bold">Paket Wedding Photo</label>
                                     <div class="form-check" onclick="selectRadio('weddingPhotoBronze')">
                                         <input class="form-check-input" type="radio" name="paket"
@@ -224,13 +236,6 @@
                                             value="wedding-photo-gold">
                                         <label class="form-check-label" for="weddingPhotoGold">
                                             Gold
-                                        </label>
-                                    </div>
-                                    <div class="form-check" onclick="selectRadio('weddingPhotoPlatinum')">
-                                        <input class="form-check-input" type="radio" name="paket"
-                                            id="weddingPhotoPlatinum" value="wedding-photo-platinum">
-                                        <label class="form-check-label" for="weddingPhotoPlatinum">
-                                            Platinum
                                         </label>
                                     </div>
                                 </div>
@@ -580,6 +585,7 @@
                     <h4>Quick Links</h4>
                     <ul>
                         <li><a href="portofolio.html">Gallery</a></li>
+                        <li><a href="about.html">About</a></li>
                         <li><a href="contact.html">Contact</a></li>
                         <li><a href="formbooking.html">Booking</a></li>
                     </ul>
