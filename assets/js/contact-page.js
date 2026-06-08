@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- WhatsApp Configuration ---
-    const WA_NUMBER = '6281234567890';
+    const WA_NUMBER = '6285232321080';
 
     // --- DOM References ---
     const btnKirim = document.getElementById('btnKirimPesan');
