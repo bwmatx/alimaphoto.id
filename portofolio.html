@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Gallery | alimaphoto</title>
+    <meta name="description"
+        content="A curated collection of weddings, engagements, portraits, maternity sessions, and meaningful moments captured through the lens of Alima Photo.">
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="https://ik.imagekit.io/bwindonesiaimg/alima/logo.png?updatedAt=1776383252051"
+        type="image/png">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/portfolio.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <div class="brand">
+                <a href="index.html" class="logo">alimaphoto</a>
+            </div>
+
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="portofolio.html" class="active">Gallery</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="formbooking.html" class="btn-nav">Booking</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Portfolio Hero -->
+    <section class="portfolio-hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content text-center">
+            <span class="hero-tagline gsap-hero">GALLERY</span>
+            <h1 class="gsap-hero">A Memories to Remember</h1>
+            <p class="gsap-hero">A curated collection of weddings, engagements, portraits, maternity sessions, and
+                meaningful moments captured through the lens of Alima Photo.</p>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="portfolio-filter-section">
+        <div class="container">
+            <div class="filter-wrapper gsap-fade">
+                <!-- Mobile Dropdown Toggle (Native Select) -->
+                <select class="mobile-filter-select" id="mobile-filter-select">
+                    <option value="all">All</option>
+                    <option value="wedding">Wedding</option>
+                    <option value="prewedding">Prewedding</option>
+                    <option value="engagement">Engagement</option>
+                    <option value="studio">Studio</option>
+                    <option value="maternity">Maternity</option>
+                </select>
+
+                <div class="filter-container" id="filter-container">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="wedding">Wedding</button>
+                    <button class="filter-btn" data-filter="prewedding">Prewedding</button>
+                    <button class="filter-btn" data-filter="engagement">Engagement</button>
+                    <button class="filter-btn" data-filter="studio">Studio</button>
+                    <button class="filter-btn" data-filter="maternity">Maternity</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Gallery Section -->
+    <section class="portfolio-gallery-section section-padding pt-0">
+        <div class="container">
+            <div class="portfolio-masonry" id="portfolio-gallery">
+                <!-- Gallery Items -->
+                <!-- Replace with original Alima Photo portfolio image -->
+                <div class="portfolio-item" data-category="wedding">
+                    <img src="https://ik.imagekit.io/bwindonesiaimg/wedding%20project/sea.season.jpg?updatedAt=1770070173687"
+                        alt="Andini & Rizky" loading="lazy">
+                    <div class="portfolio-overlay">
+                        <h3>Andini & Rizky</h3>
+                        <span>Wedding</span>
+                    </div>
+                </div>
+
+                <!-- Replace with original Alima Photo portfolio image -->
+                <div class="portfolio-item" data-category="prewedding">
+                    <img src="https://ik.imagekit.io/bwindonesiaimg/wedding%20project/sidebody.jpg?updatedAt=1770069971991"
+                        alt="Nabila & Fajar" loading="lazy">
+                    <div class="portfolio-overlay">
+                        <h3>Nabila & Fajar</h3>
+                        <span>Prewedding</span>
+                    </div>
+                </div>
+
+                <!-- Replace with original Alima Photo portfolio image -->
+                <div class="portfolio-item" data-category="studio">
+                    <img src="https://ik.imagekit.io/bwindonesiaimg/wedding%20project/kissclose.jpg?updatedAt=1778756966050"
+                        alt="Studio Portrait Session" loading="lazy">
+                    <div class="portfolio-overlay">
+                        <h3>Studio Portrait Session</h3>
+                        <span>Studio</span>
+                    </div>
+                </div>
+
+                <!-- Replace with original Alima Photo portfolio image -->
+                <div class="portfolio-item" data-category="engagement">
+                    <img src="https://ik.imagekit.io/bwindonesiaimg/wedding%20project/cipikacipiki.jpg?updatedAt=1770069340636"
+                        alt="Winda & Wondo" loading="lazy">
+                    <div class="portfolio-overlay">
+                        <h3>Winda & Wondo</h3>
+                        <span>Engagement</span>
+                    </div>
+                </div>
+
+                <!-- Replace with original Alima Photo portfolio image -->
+                <div class="portfolio-item" data-category="wedding">
+                    <img src="https://ik.imagekit.io/bwindonesiaimg/wedding%20project/marriagebooks.jpg?updatedAt=1770069670016"
+                        alt="Wulan & Doni" loading="lazy">
+                    <div class="portfolio-overlay">
+                        <h3>Wulan & Doni</h3>
+                        <span>Wedding</span>
+                    </div>
+                </div>
+
+                <!-- Replace with original Alima Photo portfolio image -->
+                <div class="portfolio-item" data-category="maternity">
+                    <img src="https://ik.imagekit.io/bwindonesiaimg/Testimoni/renggi.jpg?updatedAt=1761836259426"
+                        alt="Motherhood Journey" loading="lazy">
+                    <div class="portfolio-overlay">
+                        <h3>Motherhood Journey</h3>
+                        <span>Maternity</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+        <button class="lightbox-btn lightbox-close" id="lightbox-close">&times;</button>
+        <button class="lightbox-btn lightbox-prev" id="lightbox-prev">&larr;</button>
+        <div class="lightbox-content-wrapper">
+            <img src="" alt="Enlarged Portfolio Image" id="lightbox-img">
+            <div class="lightbox-info">
+                <h3 id="lightbox-title">Title</h3>
+                <span id="lightbox-category">Category</span>
+            </div>
+        </div>
+        <button class="lightbox-btn lightbox-next" id="lightbox-next">&rarr;</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col about-col">
+                    <a href="index.html" class="footer-logo">alimaphoto</a>
+                    <p>Alima Photo adalah studio fotografi profesional yang mengabadikan momen berharga melalui
+                        pendekatan visual yang artistik, emosional, dan berkualitas tinggi.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Social Media</h4>
+                    <ul>
+                        <li><a href="https://instagram.com" target="_blank">Instagram</a></li>
+                        <li><a href="https://tiktok.com" target="_blank">TikTok</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Alamat</h4>
+                    <p>Jl. Gang Hiu No.10 LK. Teleng,<br>Sidoharjo, Pacitan</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="portofolio.html">Portfolio</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="formbooking.html">Booking</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 All Rights Reserved | Alima Photo | By adhiwibowo</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Custom Script -->
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/portfolio.js"></script>
+</body>
+
+</html>

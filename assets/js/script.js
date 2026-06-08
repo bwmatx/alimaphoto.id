@@ -81,30 +81,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================
     // 3. Horizontal Strip Carousel (Swiper.js)
     // =========================================
-    const horizontalSwiper = new Swiper('.horizontal-swiper', {
-        direction: 'horizontal',
-        slidesPerView: 'auto',
-        spaceBetween: 40,
-        loop: true,
-        autoplay: {
-            delay: 0, 
-            disableOnInteraction: false,
-        },
-        speed: 4000, // Smooth continuous scroll effect
-        grabCursor: true,
-        freeMode: true,
-        mousewheel: {
-            forceToAxis: true,
-        },
-    });
+    const horizontalSwiperContainer = document.querySelector('.horizontal-swiper');
+    if (horizontalSwiperContainer && typeof Swiper !== 'undefined') {
+        const horizontalSwiper = new Swiper('.horizontal-swiper', {
+            direction: 'horizontal',
+            slidesPerView: 'auto',
+            spaceBetween: 40,
+            loop: true,
+            autoplay: {
+                delay: 0, 
+                disableOnInteraction: false,
+            },
+            speed: 4000, // Smooth continuous scroll effect
+            grabCursor: true,
+            freeMode: true,
+            mousewheel: {
+                forceToAxis: true,
+            },
+        });
 
-    // Pause autoplay on hover for better UX
-    const swiperContainer = document.querySelector('.horizontal-swiper');
-    if (swiperContainer) {
-        swiperContainer.addEventListener('mouseenter', () => {
+        // Pause autoplay on hover for better UX
+        horizontalSwiperContainer.addEventListener('mouseenter', () => {
             horizontalSwiper.autoplay.stop();
         });
-        swiperContainer.addEventListener('mouseleave', () => {
+        horizontalSwiperContainer.addEventListener('mouseleave', () => {
             horizontalSwiper.autoplay.start();
         });
     }
@@ -198,38 +198,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================
     // 6. Mobile Services Carousel
     // =========================================
-    const servicesSwiper = new Swiper('.services-swiper', {
-        direction: 'horizontal',
-        slidesPerView: 1,
-        spaceBetween: 20,
-        loop: true,
-        speed: 600, // 400-700ms smooth transition
-        grabCursor: true,
-        navigation: {
-            nextEl: '.swiper-button-next-custom',
-            prevEl: '.swiper-button-prev-custom',
-        },
-    });
+    if (document.querySelector('.services-swiper') && typeof Swiper !== 'undefined') {
+        const servicesSwiper = new Swiper('.services-swiper', {
+            direction: 'horizontal',
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            speed: 600, // 400-700ms smooth transition
+            grabCursor: true,
+            navigation: {
+                nextEl: '.swiper-button-next-custom',
+                prevEl: '.swiper-button-prev-custom',
+            },
+        });
+    }
 
-    // =========================================
-    // 7. Client Testimonials Stacked Carousel
-    // =========================================
-    const testimonialsSwiper = new Swiper('.testimonials-swiper', {
-        effect: 'cards',
-        grabCursor: false,
-        loop: true,
-        autoplay: {
-            delay: 2000,
-            disableOnInteraction: false,
-        },
-        speed: 1200, // 1200ms per card transition
-        allowTouchMove: false, // Disable touch/hover interactions
-        cardsEffect: {
-            perSlideOffset: 12, // Stack offset
-            perSlideRotate: 0, // Keep cards straight
-            slideShadows: false, // Clean glass look
-        }
-    });
+    // (Testimonials Swiper removed in favor of native marquee in testimonials-section.js)
 
     // =========================================
     // 8. Visibility-Based Carousel Control

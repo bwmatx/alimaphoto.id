@@ -1,0 +1,141 @@
+/* =========================================
+   CLIENT TESTIMONIALS (NATIVE MARQUEE)
+   ========================================= */
+.testimonials-native-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 1rem 0; /* Minimal padding to avoid vertical bloat */
+    /* Add fading edges for a premium cinematic look */
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent
+    );
+}
+
+.testimonials-marquee-track {
+    display: flex;
+    gap: 1.5rem;
+    width: max-content;
+    will-change: transform;
+    /* The animation is dynamically created by JS, but we can set a fallback or use CSS variables */
+}
+
+/* Ensure animation pauses on hover if desired. We use a class toggled by JS or just native CSS */
+.testimonials-native-container:hover .testimonials-marquee-track {
+    animation-play-state: paused;
+}
+
+.testimonial-card-native {
+    background: rgba(21, 21, 21, 0.85); /* #151515 base */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(213,175,54,0.15); /* Gold accent border */
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    
+    /* Desktop: 3 cards. The container is width: 100%. If gap is 1.5rem (24px) 
+       Formula for flex-basis width isn't exact because track is max-content. 
+       We will set width via JS CSS variable, but fallback here: */
+    width: 350px; 
+    flex-shrink: 0;
+}
+
+.testimonial-card-native .client-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.testimonial-card-native .client-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.testimonial-card-native .client-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-card-native h4 {
+    margin: 0 0 0.2rem 0;
+    font-size: 1.1rem;
+    color: var(--clr-secondary);
+}
+
+.testimonial-card-native span {
+    font-size: 0.8rem;
+    color: var(--clr-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: var(--fw-medium);
+}
+
+.testimonial-card-native .review {
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--clr-text-secondary);
+    margin: 0;
+}
+
+/* Tablet (2 cards visible) */
+@media (max-width: 992px) {
+    .testimonial-card-native {
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile: Narrower cards, still 2 visible */
+@media (max-width: 768px) {
+    .testimonial-card-native {
+        /* JS handles exact width based on window size */
+        padding: 1.25rem 1rem;
+        border-radius: 16px;
+        gap: 1rem;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .testimonial-card-native .client-info {
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .testimonial-card-native .client-meta {
+        align-items: center;
+    }
+    
+    .testimonial-card-native h4 {
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .testimonial-card-native .review {
+        font-size: 0.85rem;
+    }
+    
+    .testimonial-card-native .client-avatar {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto;
+    }
+}

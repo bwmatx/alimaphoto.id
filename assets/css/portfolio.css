@@ -1,0 +1,362 @@
+/* =========================================
+   PORTFOLIO PAGE STYLES
+   ========================================= */
+
+/* Hero Section */
+.portfolio-hero {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--clr-primary);
+    padding-top: 80px; /* Offset for navbar */
+    background-image: url('https://ik.imagekit.io/bwindonesiaimg/wedding%20project/sea.season.jpg?updatedAt=1770070173687');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.portfolio-hero .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7), rgba(10, 10, 10, 0.95));
+    z-index: 1;
+}
+
+.portfolio-hero .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+.portfolio-hero h1 {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    margin-bottom: 1rem;
+    color: var(--clr-secondary);
+}
+
+.portfolio-hero p {
+    font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+    margin-bottom: 0;
+    color: var(--clr-text-secondary);
+}
+
+.portfolio-hero .hero-tagline {
+    display: block;
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--clr-accent);
+    margin-bottom: 1.5rem;
+}
+
+/* Filter Section */
+.portfolio-filter-section {
+    background-color: var(--clr-primary);
+    padding: 3rem 0 1rem;
+}
+
+.filter-wrapper {
+    position: relative;
+    max-width: 100%;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--clr-text-secondary);
+    padding: 0.6rem 1.5rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: var(--fw-medium);
+    transition: var(--transition-smooth);
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: var(--clr-accent);
+    color: #111;
+    border-color: var(--clr-accent);
+}
+
+.mobile-filter-select {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .filter-container {
+        display: none; /* Hide desktop buttons */
+    }
+
+    .mobile-filter-select {
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        background: var(--clr-elevated);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: var(--clr-secondary);
+        padding: 0.8rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: var(--font-primary);
+        font-size: 1rem;
+        font-weight: var(--fw-medium);
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        /* Add custom arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F5F5F5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1em;
+    }
+
+    .mobile-filter-select:focus {
+        outline: none;
+        border-color: var(--clr-accent);
+    }
+}
+
+/* Gallery Masonry */
+.pt-0 {
+    padding-top: 0 !important;
+}
+
+.portfolio-masonry {
+    columns: 3 320px;
+    column-gap: 1.5rem;
+}
+
+.portfolio-item {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+.portfolio-item.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.portfolio-item img {
+    width: 100%;
+    display: block;
+    transition: transform 0.8s ease;
+    will-change: transform;
+}
+
+.portfolio-item:hover img {
+    transform: scale(1.05);
+}
+
+.portfolio-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.4) 40%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.portfolio-item:hover .portfolio-overlay {
+    opacity: 1;
+}
+
+.portfolio-overlay h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1.25rem;
+    color: var(--clr-secondary);
+    transform: translateY(15px);
+    transition: transform 0.4s ease;
+}
+
+.portfolio-overlay span {
+    font-size: 0.85rem;
+    color: var(--clr-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transform: translateY(15px);
+    transition: transform 0.4s ease;
+    transition-delay: 0.05s;
+}
+
+.portfolio-item:hover .portfolio-overlay h3,
+.portfolio-item:hover .portfolio-overlay span {
+    transform: translateY(0);
+}
+
+@media (max-width: 992px) {
+    .portfolio-masonry {
+        columns: 2 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .portfolio-masonry {
+        columns: 1 100%;
+        column-gap: 0;
+    }
+    
+    .portfolio-overlay {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(10, 10, 10, 0.8) 0%, transparent 50%);
+    }
+    
+    .portfolio-overlay h3, .portfolio-overlay span {
+        transform: translateY(0);
+    }
+}
+
+/* Lightbox Modal */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.lightbox-content-wrapper {
+    position: relative;
+    z-index: 2001;
+    max-width: 90vw;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lightbox-content-wrapper img {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.lightbox-content-wrapper img.loaded {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.lightbox-info {
+    text-align: center;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.lightbox-info h3 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.25rem;
+    color: var(--clr-secondary);
+}
+
+.lightbox-info span {
+    color: var(--clr-accent);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: var(--fw-medium);
+}
+
+.lightbox-btn {
+    position: absolute;
+    z-index: 2002;
+    background: transparent;
+    border: none;
+    color: var(--clr-text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-smooth);
+}
+
+.lightbox-close {
+    top: 2rem;
+    right: 2rem;
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    background: rgba(21, 21, 21, 0.5);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lightbox-prev {
+    left: 2rem;
+}
+
+.lightbox-next {
+    right: 2rem;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    color: var(--clr-accent);
+    background: rgba(21, 21, 21, 0.8);
+    border-color: var(--clr-accent);
+}
+
+@media (max-width: 768px) {
+    .lightbox-prev, .lightbox-next {
+        top: auto;
+        bottom: 2rem;
+        transform: none;
+        width: 50px;
+        height: 50px;
+        font-size: 2rem;
+    }
+    .lightbox-prev { left: 2rem; }
+    .lightbox-next { right: 2rem; }
+    .lightbox-close { top: 1rem; right: 1rem; font-size: 2.5rem; }
+    .lightbox-info { margin-bottom: 4rem; }
+}
