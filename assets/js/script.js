@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // =========================================
-    // 1. Mobile Navigation & Sticky
+    // 1. Mobile Navigation & Sticky (Throttled)
     // =========================================
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('nav-links');
@@ -12,20 +12,34 @@ document.addEventListener('DOMContentLoaded', () => {
         navLinks.classList.toggle('active');
     });
 
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
+    // Throttled scroll listener for navbar (reduces reflow)
+    let lastScrollY = 0;
+    let ticking = false;
+    
+    function updateNavbar() {
+        if (lastScrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
-    });
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        lastScrollY = window.scrollY;
+        if (!ticking) {
+            requestAnimationFrame(updateNavbar);
+            ticking = true;
+        }
+    }, { passive: true });
 
     // =========================================
-    // 2. Hero Background Slideshow (Auto Slide)
+    // 2. Hero Background Slideshow (Visibility-Aware)
     // =========================================
     const slides = document.querySelectorAll('.hero-slides .slide');
     let currentSlide = 0;
     const slideDuration = 6000; // 6 seconds
+    let heroInterval = null;
 
     function nextSlide() {
         slides[currentSlide].classList.remove('active');
@@ -33,8 +47,35 @@ document.addEventListener('DOMContentLoaded', () => {
         slides[currentSlide].classList.add('active');
     }
 
-    if(slides.length > 0) {
-        setInterval(nextSlide, slideDuration);
+    function startHeroSlideshow() {
+        if (!heroInterval && slides.length > 0) {
+            heroInterval = setInterval(nextSlide, slideDuration);
+        }
+    }
+
+    function stopHeroSlideshow() {
+        if (heroInterval) {
+            clearInterval(heroInterval);
+            heroInterval = null;
+        }
+    }
+
+    // Start slideshow initially
+    startHeroSlideshow();
+
+    // Pause hero slideshow when not visible (saves CPU)
+    const heroSection = document.getElementById('home');
+    if (heroSection && 'IntersectionObserver' in window) {
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    startHeroSlideshow();
+                } else {
+                    stopHeroSlideshow();
+                }
+            });
+        }, { threshold: 0.1 });
+        heroObserver.observe(heroSection);
     }
 
     // =========================================
@@ -73,6 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================
     gsap.registerPlugin(ScrollTrigger);
 
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+
     // Hero Text Fade In (Play on load)
     gsap.fromTo(".gsap-hero", 
         { y: 20, autoAlpha: 0 }, 
@@ -80,17 +123,32 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Hero Background Cinematic Zoom on Scroll
+    // On mobile: disable scrub (expensive continuous GPU calculation)
+    // On desktop: keep original scrub behavior
     const heroBgContainer = document.getElementById('hero-bg-container');
     if(heroBgContainer) {
-        gsap.to(heroBgContainer, {
-            scale: 1.2, // Zoom in progressive
-            scrollTrigger: {
-                trigger: ".hero",
-                start: "top top",
-                end: "bottom top",
-                scrub: 1 // Smooth scrubbing
-            }
-        });
+        if (isMobile) {
+            // Simple scale, no continuous scrub — much lighter on GPU
+            gsap.to(heroBgContainer, {
+                scale: 1.08,
+                scrollTrigger: {
+                    trigger: ".hero",
+                    start: "top top",
+                    end: "bottom top",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        } else {
+            gsap.to(heroBgContainer, {
+                scale: 1.2, // Zoom in progressive
+                scrollTrigger: {
+                    trigger: ".hero",
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: 1 // Smooth scrubbing — desktop only
+                }
+            });
+        }
     }
 
     // General Fade Up Animation
@@ -172,6 +230,32 @@ document.addEventListener('DOMContentLoaded', () => {
             slideShadows: false, // Clean glass look
         }
     });
+
+    // =========================================
+    // 8. Visibility-Based Carousel Control
+    //    Pause carousels when off-screen (saves GPU/CPU)
+    // =========================================
+    if ('IntersectionObserver' in window) {
+        const carouselObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const swiper = entry.target.swiper;
+                if (swiper && swiper.autoplay) {
+                    if (entry.isIntersecting) {
+                        swiper.autoplay.start();
+                    } else {
+                        swiper.autoplay.stop();
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Observe each carousel container
+        const horizontalEl = document.querySelector('.horizontal-swiper');
+        const testimonialsEl = document.querySelector('.testimonials-swiper');
+
+        if (horizontalEl) carouselObserver.observe(horizontalEl);
+        if (testimonialsEl) carouselObserver.observe(testimonialsEl);
+    }
 
     // Staggered Animations for Cards (Masonry)
     const staggerSections = [

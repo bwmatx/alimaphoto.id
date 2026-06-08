@@ -335,6 +335,7 @@ ul {
     background-position: center;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
+    will-change: opacity;
 }
 
 .hero-slides .slide.active {
@@ -423,6 +424,14 @@ ul {
     }
 }
 
+/* Mobile performance: reduce expensive effects */
+@media (max-width: 1024px) {
+    .navbar.scrolled {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+}
+
 /* =========================================
    SECTION 2: RECENT PROJECTS (Horizontal Strip)
    ========================================= */
@@ -460,6 +469,7 @@ ul {
     height: 100%;
     object-fit: cover;
     transition: transform 0.6s ease;
+    will-change: transform;
 }
 
 .project-card:hover .project-img img {
@@ -594,7 +604,8 @@ ul {
     opacity: 0;
     visibility: hidden;
     transform: scale(1.05);
-    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
 }
 
 .service-img.active {
@@ -724,6 +735,14 @@ ul {
     line-height: 1.8;
     color: var(--clr-text-secondary);
     margin: 0;
+}
+
+/* Mobile performance: reduce testimonial glass blur */
+@media (max-width: 1024px) {
+    .testimonial-glass-card {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
 }
 
 /* =========================================
