@@ -866,3 +866,12 @@ ul {
         gap: 2rem;
     }
 }
+
+.footer-link {
+    color: inherit;         /* Mengikuti warna teks <p> di footernya */
+    text-decoration: underline; /* Memastikan garis bawah selalu muncul */
+}
+
+.footer-link:hover {
+    color: var(--clr-accent);         /* Berubah warna jadi biru (atau warna lain) saat kursor di atasnya */
+}

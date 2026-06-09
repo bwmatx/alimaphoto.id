@@ -85,14 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const nama = namaInput.value.trim();
         const pesan = pesanInput.value.trim();
 
-        const message = `Halo Admin Alima Photo,
+        const message = `Halo Min Limpo!,
 
-Nama: ${nama}
+Aku ${nama} pengen nanya ini dong,
 
 Pesan:
 ${pesan}
 
-Terima kasih.`;
+Terima kasih!`;
 
         const encoded = encodeURIComponent(message);
         const waURL = `https://wa.me/${WA_NUMBER}?text=${encoded}`;

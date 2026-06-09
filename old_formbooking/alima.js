@@ -315,7 +315,7 @@
                         showModal(
                             'success',
                             'Tanggal Terkunci!',
-                            'Terima kasih! Booking Anda telah berhasil disubmit. Tim kami akan segera menghubungi Anda.',
+                            'Min Limpo akan segera menghubungi Anda :)',
                             [
                                 {
                                     text: 'OK',
@@ -383,7 +383,7 @@
                         showModal(
                             'success',
                             'Berhasil!',
-                            'Nomor rekening berhasil dicopy: ' + rekeningNumber,
+                            'Nomor Rekening berhasil dicopy',
                             [
                                 {
                                     text: 'OK',

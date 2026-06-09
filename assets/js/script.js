@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================
     const slides = document.querySelectorAll('.hero-slides .slide');
     let currentSlide = 0;
-    const slideDuration = 6000; // 6 seconds
+    const slideDuration = 1800; // 1.8 seconds
     let heroInterval = null;
 
     function nextSlide() {
