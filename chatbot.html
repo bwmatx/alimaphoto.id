@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Min Limpo | Asisten AI Alima Photo</title>
+    <meta name="description"
+        content="Tanyakan pricelist, paket wedding, lokasi studio, jam kerja, dan gear tim Alima Photo melalui asisten AI.">
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="https://ik.imagekit.io/bwindonesiaimg/alima/logo.png?updatedAt=1776383252051"
+        type="image/png">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <div class="brand">
+                <a href="index.html" class="logo">alimaphoto</a>
+            </div>
+
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="portofolio.html">Gallery</a></li>
+                <li><a href="about.html">Our Team</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="formbooking.html">Booking</a></li>
+                <li><a href="chatbot.html" class="btn-nav active">Tanya Min Limpo</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="chatbot-hero">
+        <div class="container">
+            <span class="hero-eyebrow">ASISTEN DIGITAL</span>
+            <h1>Tanya Min Limpo</h1>
+            <p class="hero-desc">Dapatkan informasi pricelist, lokasi studio, jam kerja, dan tim secara cepat melalui asisten AI Min Limpo.</p>
+        </div>
+    </section>
+
+    <!-- Chat Section -->
+    <section class="chat-section">
+        <div class="container chat-wrapper">
+
+            <!-- Chat Container -->
+            <div class="chat-container">
+
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-header-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="chat-header-text">
+                        <h3>Min Limpo</h3>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages rendered by JS -->
+                </div>
+
+                <!-- Loading Indicator -->
+                <div class="chat-loading" id="chatLoading">
+                    <div class="typing-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+
+                <!-- Quick Questions -->
+                <div class="quick-questions" id="quickQuestions">
+                    <button type="button" class="quick-btn" data-question="semua pricelist">
+                        Semua Pricelist
+                    </button>
+                    <button type="button" class="quick-btn" data-question="paket foto saja">
+                        Paket Foto Saja
+                    </button>
+                    <button type="button" class="quick-btn" data-question="paket foto + video">
+                        Paket Foto + Video
+                    </button>
+                    <button type="button" class="quick-btn" data-question="paket complete">
+                        Paket Complete
+                    </button>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-area">
+                    <input
+                        type="text"
+                        class="chat-input"
+                        id="chatInput"
+                        placeholder="Tulis pertanyaan Anda tentang paket wedding..."
+                        maxlength="500"
+                        aria-label="Ketik pertanyaan"
+                    >
+                    <button type="button" class="chat-send-btn" id="chatSendBtn" aria-label="Kirim pertanyaan">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="chat-cta">
+                <p>Butuh konsultasi lebih lanjut?</p>
+                <div class="chat-cta-buttons">
+                    <a href="contact.html" class="btn-outline">
+                        Hubungi WhatsApp
+                    </a>
+                    <a href="formbooking.html" class="btn-primary">
+                        Booking Sekarang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navbar Script -->
+    <script src="assets/js/script.js"></script>
+
+    <!-- Chatbot Script -->
+    <script src="assets/js/chatbot.js"></script>
+</body>
+
+</html>
