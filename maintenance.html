@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Maintenance</title>
+    <meta name="description" content="Website sedang dalam pemeliharaan. Silakan kembali beberapa saat lagi.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Brand font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://ik.imagekit.io/bwindonesiaimg/alima/logo.png?updatedAt=1776383252051"
+        type="image/png">
+
+    <style>
+        :root {
+            --clr-primary: #0A0A0A;
+            --clr-secondary: #F5F5F5;
+            --clr-accent: #D5AF36;
+            --clr-accent-hover: #E4C04D;
+            --clr-neutral: #151515;
+            --clr-surface: #1B1B1B;
+            --clr-elevated: #222222;
+            --clr-text-secondary: #BDBDBD;
+            --clr-text-muted: #999999;
+            --clr-border: rgba(255, 255, 255, 0.08);
+            --font-primary: 'Poppins', sans-serif;
+            --transition-smooth: 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--clr-primary);
+            color: var(--clr-secondary);
+            line-height: 1.6;
+            font-weight: 400;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition-smooth);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ── Header ────────────────────── */
+        .maintenance-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .maintenance-logo {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(213, 175, 54, 0.25);
+        }
+
+        .maintenance-brand-fallback {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: var(--clr-secondary);
+        }
+
+        /* ── Main Container ────────────── */
+        .maintenance-wrapper {
+            width: 100%;
+            max-width: 640px;
+            text-align: center;
+        }
+
+        /* ── Illustration ──────────────── */
+        .maintenance-illustration {
+            margin: 0 auto 2rem;
+            width: 120px;
+            height: 120px;
+            opacity: 0.6;
+        }
+
+        .maintenance-illustration svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ── Badge ─────────────────────── */
+        .maintenance-badge {
+            display: inline-block;
+            padding: 0.35rem 1.25rem;
+            border: 1px solid var(--clr-accent);
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--clr-accent);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ── Headline ──────────────────── */
+        .maintenance-headline {
+            font-size: clamp(1.75rem, 5vw, 3rem);
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--clr-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* ── Description ───────────────── */
+        .maintenance-description {
+            font-size: clamp(0.9rem, 2vw, 1.05rem);
+            color: var(--clr-text-secondary);
+            max-width: 520px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        /* ── Status Card ───────────────── */
+        .maintenance-card {
+            background-color: var(--clr-neutral);
+            border: 1px solid var(--clr-border);
+            border-radius: 12px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .maintenance-card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--clr-border);
+            font-size: 0.9rem;
+        }
+
+        .maintenance-card-row:last-child {
+            border-bottom: none;
+        }
+
+        .maintenance-card-label {
+            color: var(--clr-text-muted);
+            font-weight: 400;
+            flex-shrink: 0;
+            margin-right: 1rem;
+        }
+
+        .maintenance-card-value {
+            color: var(--clr-secondary);
+            font-weight: 500;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .maintenance-card-value.status-active {
+            color: var(--clr-accent);
+        }
+
+        /* ── Countdown ─────────────────── */
+        .maintenance-countdown {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .countdown-item {
+            background-color: var(--clr-elevated);
+            border: 1px solid var(--clr-border);
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+            min-width: 64px;
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--clr-secondary);
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: var(--clr-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        /* ── Buttons ───────────────────── */
+        .maintenance-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-retry {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2.5rem;
+            background-color: var(--clr-accent);
+            color: #111111;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid var(--clr-accent);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .btn-retry:hover {
+            background-color: var(--clr-accent-hover);
+            color: #111111;
+        }
+
+        .btn-contact {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2.5rem;
+            border: 1px solid var(--clr-accent);
+            color: var(--clr-accent);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .btn-contact:hover {
+            background-color: var(--clr-accent);
+            color: #111111;
+        }
+
+        /* ── Contact Section ───────────── */
+        .maintenance-contact {
+            margin-bottom: 2rem;
+        }
+
+        .maintenance-contact-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--clr-text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .maintenance-contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--clr-text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .contact-link:hover {
+            color: var(--clr-accent);
+        }
+
+        .contact-link svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ── Footer ────────────────────── */
+        .maintenance-footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .maintenance-footer p {
+            font-size: 0.8rem;
+            color: var(--clr-text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .footer-link {
+            color: var(--clr-accent);
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: var(--clr-accent-hover);
+        }
+
+        /* ── Pulse Animation ───────────── */
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* ── No JS Fallback ────────────── */
+        .no-js-hide {
+            display: none;
+        }
+
+        /* ── Responsive ────────────────── */
+        @media (max-width: 768px) {
+            body {
+                padding: 1.5rem 1rem;
+            }
+
+            .maintenance-logo {
+                width: 56px;
+                height: 56px;
+            }
+
+            .maintenance-illustration {
+                width: 90px;
+                height: 90px;
+                margin-bottom: 1.5rem;
+            }
+
+            .maintenance-card {
+                padding: 1.25rem 1rem;
+            }
+
+            .maintenance-card-row {
+                flex-direction: column;
+                gap: 0.25rem;
+                padding: 0.5rem 0;
+            }
+
+            .maintenance-card-value {
+                text-align: left;
+            }
+
+            .maintenance-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-retry,
+            .btn-contact {
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .maintenance-countdown {
+                gap: 0.5rem;
+            }
+
+            .countdown-item {
+                min-width: 56px;
+                padding: 0.5rem 0.5rem;
+            }
+
+            .countdown-number {
+                font-size: 1.15rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Content -->
+    <main class="maintenance-wrapper">
+
+        <!-- Illustration -->
+        <div class="maintenance-illustration pulse" aria-hidden="true">
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="56" stroke="#D5AF36" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.3" />
+                <circle cx="60" cy="60" r="40" stroke="#D5AF36" stroke-width="1" stroke-dasharray="5 5" opacity="0.2" />
+                <path d="M60 28 L60 60 L82 71" stroke="#D5AF36" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" opacity="0.7" />
+                <circle cx="60" cy="60" r="6" fill="#D5AF36" opacity="0.5" />
+                <circle cx="60" cy="60" r="3" fill="#D5AF36" />
+            </svg>
+        </div>
+
+        <!-- Badge -->
+        <span class="maintenance-badge">Maintenance</span>
+
+        <!-- Headline -->
+        <h1 class="maintenance-headline">Website Sedang Dalam Pemeliharaan</h1>
+
+        <!-- Description -->
+        <p class="maintenance-description">
+            Kami sedang melakukan pembaruan sistem untuk meningkatkan performa, keamanan, dan kenyamanan pengguna.
+            Silakan kembali beberapa saat lagi.
+        </p>
+
+        <!-- Countdown Timer (JS-enhanced) -->
+        <div class="maintenance-countdown" id="countdown" style="display:none;">
+            <div class="countdown-item">
+                <div class="countdown-number" id="countdown-hours">00</div>
+                <div class="countdown-label">Jam</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="countdown-minutes">00</div>
+                <div class="countdown-label">Menit</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="countdown-seconds">00</div>
+                <div class="countdown-label">Detik</div>
+            </div>
+        </div>
+
+        <!-- Status Card -->
+        <div class="maintenance-card">
+            <div class="maintenance-card-row">
+                <span class="maintenance-card-label">Status Sistem</span>
+                <span class="maintenance-card-value status-active">Sedang Dalam Pemeliharaan</span>
+            </div>
+            <div class="maintenance-card-row">
+                <span class="maintenance-card-label">Jenis Maintenance</span>
+                <span class="maintenance-card-value" id="maintenance-type">Pembaruan Sistem</span>
+            </div>
+            <div class="maintenance-card-row" id="eta-row">
+                <span class="maintenance-card-label">Estimasi Selesai</span>
+                <span class="maintenance-card-value" id="eta-display">Sebentar lagi</span>
+            </div>
+            <div class="maintenance-card-row">
+                <span class="maintenance-card-label">Bantuan</span>
+                <span class="maintenance-card-value">
+                    <a href="mailto:[EMAIL_ADDRESS]" style="color:var(--clr-accent);">kwibowo437@yahoo.com</a>
+                </span>
+            </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="maintenance-actions">
+            <a href="./" class="btn-retry" id="btn-retry" rel="nofollow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10" />
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                </svg>
+                Coba Lagi
+            </a>
+            <a href="#contact-section" class="btn-contact">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                Hubungi Kami
+            </a>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="maintenance-contact" id="contact-section">
+            <p class="maintenance-contact-title">Butuh bantuan segera? Hubungi tim kami melalui:</p>
+            <div class="maintenance-contact-links">
+                <a href="https://wa.me/6285232321080" class="contact-link" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                    WhatsApp
+                </a>
+                <a href="mailto:support@alima.adhiwibowo.space" class="contact-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    Email
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="maintenance-footer">
+        <p>&copy; 2026 Alima Photo. All rights reserved.</p>
+        <p>Designed &amp; Developed by <a href="https://adhiwibowo.space" target="_blank" rel="noopener"
+                class="footer-link">adhiwibowo</a></p>
+    </footer>
+
+    <!-- Maintenance Configuration & Logic -->
+    <script>
+        (function () {
+            /* ═══════════════════════════════════════════
+               MAINTENANCE CONFIGURATION
+               Developer: edit these values to configure
+               ═══════════════════════════════════════════ */
+            var CONFIG = {
+                brandName: 'Alima Photo',
+                logoUrl: 'https://ik.imagekit.io/bwindonesiaimg/alima/logo.png?updatedAt=1776383252051',
+                headline: 'Website Sedang Dalam Pemeliharaan',
+                description: 'Kami sedang melakukan pembaruan sistem untuk meningkatkan performa, keamanan, dan kenyamanan pengguna. Silakan kembali beberapa saat lagi.',
+                maintenanceType: 'Pembaruan Sistem',
+                estimatedEndTime: null,
+                /* Set to ISO string, e.g. '2026-06-11T22:00:00+07:00' */
+                timezone: 'WIB',
+                contactEmail: 'support@alima.adhiwibowo.space',
+                contactWhatsapp: '6285232321080',
+                retryButtonLabel: 'Coba Lagi',
+                contactButtonLabel: 'Hubungi Kami',
+                retryIntervalSeconds: 30
+                /* Seconds between auto-reload attempts; 0 = disabled */
+            };
+
+            /* ── Apply config to DOM ──────── */
+            function applyConfig() {
+                var mt = document.getElementById('maintenance-type');
+                if (mt) mt.textContent = CONFIG.maintenanceType;
+
+                var etaDisplay = document.getElementById('eta-display');
+                if (!CONFIG.estimatedEndTime && etaDisplay) {
+                    etaDisplay.textContent = 'Website akan segera kembali aktif. Silakan coba beberapa saat lagi.';
+                }
+            }
+
+            /* ── Logo fallback ────────────── */
+            function handleLogoFallback() {
+                var logo = document.querySelector('.maintenance-logo');
+                var fallback = document.querySelector('.maintenance-brand-fallback');
+                if (!logo || !fallback) return;
+                logo.onerror = function () {
+                    logo.style.display = 'none';
+                    fallback.style.display = 'block';
+                };
+                logo.onload = function () {
+                    fallback.style.display = 'none';
+                };
+            }
+
+            /* ── Countdown Timer ──────────── */
+            function initCountdown() {
+                if (!CONFIG.estimatedEndTime) return;
+
+                var endTime = new Date(CONFIG.estimatedEndTime).getTime();
+                if (isNaN(endTime) || endTime <= Date.now()) return;
+
+                var countdownEl = document.getElementById('countdown');
+                var hoursEl = document.getElementById('countdown-hours');
+                var minutesEl = document.getElementById('countdown-minutes');
+                var secondsEl = document.getElementById('countdown-seconds');
+                var etaDisplay = document.getElementById('eta-display');
+
+                if (!countdownEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+                countdownEl.style.display = 'flex';
+
+                function formatDate(d) {
+                    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+                    var days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+                    return days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+                }
+
+                function pad(n) { return n < 10 ? '0' + n : n; }
+
+                function tick() {
+                    var now = Date.now();
+                    var remaining = endTime - now;
+
+                    if (remaining <= 0) {
+                        hoursEl.textContent = '00';
+                        minutesEl.textContent = '00';
+                        secondsEl.textContent = '00';
+                        if (etaDisplay) etaDisplay.textContent = 'Maintenance telah selesai. Memuat ulang...';
+                        setTimeout(function () { window.location.reload(); }, 2000);
+                        return;
+                    }
+
+                    var h = Math.floor(remaining / 3600000);
+                    var m = Math.floor((remaining % 3600000) / 60000);
+                    var s = Math.floor((remaining % 60000) / 1000);
+
+                    hoursEl.textContent = pad(h);
+                    minutesEl.textContent = pad(m);
+                    secondsEl.textContent = pad(s);
+
+                    if (etaDisplay) {
+                        var endDate = new Date(endTime);
+                        etaDisplay.textContent = formatDate(endDate) + ', pukul ' +
+                            pad(endDate.getHours()) + ':' + pad(endDate.getMinutes()) + ' ' + CONFIG.timezone;
+                    }
+                }
+
+                tick();
+                setInterval(tick, 1000);
+            }
+
+            /* ── Auto-reload ──────────────── */
+            function initAutoReload() {
+                if (!CONFIG.retryIntervalSeconds || CONFIG.retryIntervalSeconds <= 0) return;
+                setInterval(function () {
+                    window.location.reload();
+                }, CONFIG.retryIntervalSeconds * 1000);
+            }
+
+            /* ── Retry button ─────────────── */
+            function initRetryButton() {
+                var btn = document.getElementById('btn-retry');
+                if (!btn) return;
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.location.reload();
+                });
+            }
+
+            /* ── Init ─────────────────────── */
+            applyConfig();
+            handleLogoFallback();
+            initCountdown();
+            initAutoReload();
+            initRetryButton();
+        })();
+    </script>
+
+</body>
+
+</html>
