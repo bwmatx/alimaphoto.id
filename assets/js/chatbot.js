@@ -114,8 +114,32 @@
        MESSAGE RENDERING
        ======================================== */
 
+    function sanitizeReply(text) {
+        if (!text) return text;
+        // PRD §20.1-20.3: Remove phone numbers and [nomor disembunyikan] placeholders
+        var result = text
+            // Step 1: Remove phone numbers entirely
+            .replace(/(?:\+?62|0)\s*8\d{1,2}[\s.\-]?\d{2,4}[\s.\-]?\d{2,4}[\s.\-]?\d{2,4}/gi, '')
+            // Step 2: Remove common patterns with placeholder
+            .replace(/konfirmasi\s+via\s+whatsapp\s+ke\s+\[nomor disembunyikan\]\.?/gi, 'konfirmasi via WhatsApp ya kak.')
+            .replace(/hubungi\s+nomor\s+berikut\.?/gi, 'lanjut lewat WhatsApp ya kak.')
+            .replace(/nomor\s*whatsapp\s*:?\s*\[nomor disembunyikan\]/gi, '')
+            .replace(/whatsapp\s*:?\s*\[nomor disembunyikan\]/gi, '')
+            .replace(/di\s+nomor\s*\[nomor disembunyikan\]/gi, '')
+            .replace(/ke\s+nomor\s*\[nomor disembunyikan\]/gi, '')
+            // Step 3: Remove any remaining [nomor disembunyikan] placeholders
+            .replace(/\[nomor disembunyikan\]/gi, '')
+            // Step 4: Clean up extra whitespace (preserve newlines)
+            .replace(/[ \t]{2,}/g, ' ')
+            .replace(/\n\s*\n\s*\n/g, '\n\n')
+            .trim();
+        return result;
+    }
+
     function formatBotText(text) {
-        var escaped = text
+        var sanitized = sanitizeReply(text);
+
+        var escaped = sanitized
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -123,14 +147,22 @@
 
         escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         escaped = escaped.replace(/\*([^*<]+)\*/g, '<strong>$1</strong>');
+        
+        // Convert explicit newlines to HTML break tags to guarantee multiline rendering
+        escaped = escaped.replace(/\n/g, '<br>');
 
         return escaped;
     }
 
-    function appendMessage(role, text) {
+    function appendMessage(role, text, ctas) {
+        // PRD §13.1: Structure must be:
+        //   assistant-message-block
+        //     ├── assistant-bubble-row -> bubble
+        //     └── assistant-cta-row -> cta-container (BELOW bubble)
         var messageDiv = document.createElement('div');
         messageDiv.className = 'message message-' + role;
 
+        // Bubble row
         var bubble = document.createElement('div');
         bubble.className = 'message-bubble';
 
@@ -145,6 +177,25 @@
         }
 
         messageDiv.appendChild(bubble);
+
+        // PRD §13.2: CTA row rendered AFTER bubble row, as a SEPARATE row
+        // PRD §18.6: CTA container must NOT render if no buttons exist
+        if (ctas && ctas.length > 0 && role === 'bot') {
+            var ctaRow = document.createElement('div');
+            ctaRow.className = 'chat-cta-inline';
+            for (var c = 0; c < ctas.length; c++) {
+                var btn = document.createElement('a');
+                btn.href = ctas[c].url;
+                btn.className = 'chat-cta-btn ' + (ctas[c].type || '');
+                btn.textContent = ctas[c].label;
+                btn.setAttribute('target', '_blank');
+                btn.setAttribute('rel', 'noopener noreferrer');
+                ctaRow.appendChild(btn);
+            }
+            // PRD §10.1: CTA appended as sibling of bubble, NOT child of bubble
+            messageDiv.appendChild(ctaRow);
+        }
+
         chatMessages.appendChild(messageDiv);
 
         chatHistory.push({ role: role, content: text, timestamp: Date.now() });
@@ -168,7 +219,126 @@
     }
 
     function getGearRedirectResponse() {
-        return 'Untuk detail gear yang digunakan tim Alima Photo, boleh langsung chat Min Limpo via WhatsApp ya kak 🙏\nNomor WhatsApp: 0852 3232 1080';
+        return 'Untuk detail gear yang digunakan tim Alima Photo, silakan klik tombol Chat via WhatsApp di bawah pesan ini ya kak \u{1F64F}';
+    }
+
+    /* ========================================
+       OUT-OF-AREA DETECTION & RESPONSE
+       PRD §17.2: Outside service area -> MUST direct to WhatsApp
+       ======================================== */
+
+    var OUT_OF_AREA_KEYWORDS = [
+        'solo', 'surabaya', 'jakarta', 'semarang', 'jogja', 'yogyakarta',
+        'malang', 'bandung', 'bali', 'medan', 'makassar', 'denpasar',
+        'bekasi', 'tangerang', 'bogor', 'depok', 'cirebon', 'kudus',
+        'pekalongan', 'purwokerto', 'magelang', 'klaten', 'boyolali',
+        'karanganyar', 'sragen', 'ngawi', 'magetan', 'madiun', 'kediri',
+        'blitar', 'tulungagung', 'jember', 'banyuwangi', 'lumajang',
+        'probolinggo', 'pasuruan', 'sidoarjo', 'gresik', 'lamongan',
+        'tuban', 'mojokerto', 'nganjuk', 'jombang',
+        'luar jawa', 'luar pulau', 'kalimantan', 'sulawesi', 'sumatera',
+        'sumatra', 'papua', 'ntt', 'ntb', 'lombok', 'flores',
+        'aceh', 'palembang', 'lampung', 'batam', 'pekanbaru', 'padang',
+        'jambi', 'bengkulu', 'banjarmasin', 'balikpapan', 'samarinda',
+        'manado', 'kendari', 'palu', 'ambon', 'jayapura', 'sorong'
+    ];
+
+    function isOutOfAreaQuery(msg) {
+        var lower = (msg || '').toLowerCase();
+        return containsAny(lower, OUT_OF_AREA_KEYWORDS);
+    }
+
+    function extractCityName(msg) {
+        var lower = (msg || '').toLowerCase();
+        for (var i = 0; i < OUT_OF_AREA_KEYWORDS.length; i++) {
+            if (lower.indexOf(OUT_OF_AREA_KEYWORDS[i]) !== -1) {
+                // Capitalize first letter
+                var city = OUT_OF_AREA_KEYWORDS[i];
+                return city.charAt(0).toUpperCase() + city.slice(1);
+            }
+        }
+        return 'wilayah tersebut';
+    }
+
+    function getOutOfAreaReply(msg) {
+        var city = extractCityName(msg);
+        return 'Maaf kak, untuk lokasi ' + city + ' saat ini belum masuk dalam area layanan Alima Photo ya. Jika kakak ingin berdiskusi silahkan hubungi WhatsApp dengan menekan tombol "Chat via WhatsApp" di bawah ya kak.';
+    }
+
+    /**
+     * Post-process backend AI reply for out-of-area queries.
+     * If the user asked about an out-of-area location but the backend AI
+     * gave a wrong response (e.g. "Kalau acara kakak di daerah sekitar sini"),
+     * override it with the correct WhatsApp CTA redirect.
+     */
+    function postProcessOutOfAreaReply(userMessage, reply) {
+        if (!isOutOfAreaQuery(userMessage)) return reply;
+
+        // Detect bad patterns in backend AI response
+        var badPatterns = [
+            'kalau acara kakak di daerah sekitar',
+            'kalau acara kakak di daerah sini',
+            'boleh kasih tahu detailnya',
+            'boleh kasih tau detailnya',
+            'nanti min limpo bantu hitung',
+            'bantu hitung estimasi'
+        ];
+        var replyLower = reply.toLowerCase();
+        var hasBadPattern = false;
+        for (var i = 0; i < badPatterns.length; i++) {
+            if (replyLower.indexOf(badPatterns[i]) !== -1) {
+                hasBadPattern = true;
+                break;
+            }
+        }
+
+        if (hasBadPattern) {
+            log('warn', 'Backend out-of-area reply has bad pattern, overriding');
+            return getOutOfAreaReply(userMessage);
+        }
+
+        // Even if no bad pattern, ensure the reply mentions WhatsApp CTA
+        if (replyLower.indexOf('whatsapp') === -1 && replyLower.indexOf('tombol') === -1) {
+            log('warn', 'Backend out-of-area reply missing WhatsApp direction, overriding');
+            return getOutOfAreaReply(userMessage);
+        }
+
+        return reply;
+    }
+
+    /* ========================================
+       UNLIMITED FILES & EDITING EXPLANATION
+       PRD: Stop backend hallucination about editing 5000 photos
+       ======================================== */
+
+    function isUnlimitedFilesQuery(msg) {
+        var m = (msg || '').toLowerCase();
+        return containsAny(m, ['unlimited', 'tanpa batas', 'semua foto diedit', 'edit semua', 'diedit semua', 'semua di edit', 'di edit semua', 'foto mentah', 'file mentah', 'semua foto di edit']);
+    }
+
+    function getUnlimitedFilesReply() {
+        return 'Halo kak 🙂 Untuk "Unlimited Files", artinya **semua file mentah hasil jepretan kamera selama acara akan kami berikan semuanya** kepada kakak tanpa ada batasan jumlah.\n\nNamun untuk **proses editing**, tim kami hanya akan **memilih foto-foto terbaik** saja (jadi tidak semua file mentah diedit ya kak) agar hasilnya maksimal dan eksklusif. File mentah dan file edit nantinya akan dikirimkan via Drive atau Flashdisk sesuai dengan paket yang kakak pilih 🙏\n\nAda pertanyaan lain seputar benefit paket, kak?';
+    }
+
+    function postProcessUnlimitedReply(userMessage, reply) {
+        if (!isUnlimitedFilesQuery(userMessage)) return reply;
+
+        var replyLower = reply.toLowerCase();
+        // Check for common backend AI hallucinations
+        if (replyLower.indexOf('semua foto diedit') !== -1 ||
+            replyLower.indexOf('semua file diedit') !== -1 ||
+            replyLower.indexOf('semuanya akan diedit') !== -1 ||
+            replyLower.indexOf('diedit semua') !== -1 ||
+            replyLower.indexOf('semuanya diedit') !== -1 ||
+            replyLower.indexOf('semua file foto yang kami serahkan') !== -1 ||
+            replyLower.indexOf('sudah melalui proses editing') !== -1 ||
+            replyLower.indexOf('proses editing ya kak') !== -1) {
+            log('warn', 'Backend unlimited files reply is hallucinating, overriding');
+            return getUnlimitedFilesReply();
+        }
+
+        // To be absolutely safe regarding the strict PRD, if they ask about unlimited/editing, override it
+        return getUnlimitedFilesReply();
     }
 
     /* ========================================
@@ -182,66 +352,71 @@
             return getGearRedirectResponse();
         }
 
+        if (isUnlimitedFilesQuery(msg)) {
+            return getUnlimitedFilesReply();
+        }
+
         if (msg === 'semua pricelist' || /^(semua|lihat|daftar|all) (pricelist|harga|paket)/i.test(msg)) {
             return 'Boleh kak 🙂 Ini pilihan paket Alima Photo secara ringkas:\n' +
                 '\n' +
                 '1. Photography Wedding Packages\n' +
-                '   - Bronze: Rp1.500.000\n' +
-                '   - Silver: Rp2.300.000\n' +
-                '   - Gold: Rp5.000.000\n' +
+                '   - 1.1 Bronze: Rp1.500.000\n' +
+                '   - 1.2 Silver: Rp2.300.000\n' +
+                '   - 1.3 Gold: Rp5.000.000\n' +
                 '\n' +
                 '2. Photography and Videography Wedding Packages\n' +
-                '   - Bronze: Rp3.500.000\n' +
-                '   - Silver: Rp4.000.000\n' +
-                '   - Gold: Rp6.500.000\n' +
-                '   - Platinum: Rp8.000.000\n' +
+                '   - 2.1 Bronze: Rp3.500.000\n' +
+                '   - 2.2 Silver: Rp4.000.000\n' +
+                '   - 2.3 Gold: Rp6.500.000\n' +
+                '   - 2.4 Platinum: Rp8.000.000\n' +
                 '\n' +
                 '3. Bahagia Package\n' +
-                '   - Bahagia: Rp3.000.000\n' +
+                '   - 3.1 Bahagia: Rp3.000.000\n' +
                 '\n' +
                 '4. Complete Photography and Videography Wedding-Prewedding\n' +
-                '   - Complete 1: Rp6.500.000\n' +
-                '   - Complete 2: Rp7.500.000\n' +
-                '   - Complete 3: Rp8.500.000\n' +
+                '   - 4.1 Complete 1: Rp6.500.000\n' +
+                '   - 4.2 Complete 2: Rp7.500.000\n' +
+                '   - 4.3 Complete 3: Rp8.500.000\n' +
                 '\n' +
                 'Mau lihat detail benefit yang mana dulu, kak?\n' +
-                'Bisa ketik nama tier seperti Bronze, Silver, Gold, Platinum, Complete 1, atau nomor paketnya 🙂';
+                'Bisa ketik nomor kategori (1-4) atau sub-nomornya (1.1, 2.3, dll) 🙂';
         }
 
         if (containsAny(msg, ['foto saja', 'foto aja', 'paket foto saja', 'photo only', 'fotografi saja'])) {
             return 'Boleh kak 🙂 Untuk paket foto saja, pilihannya ini ya:\n' +
                 '\n' +
                 '1. Photography Wedding Packages\n' +
-                '   - Bronze: Rp1.500.000\n' +
-                '   - Silver: Rp2.300.000\n' +
-                '   - Gold: Rp5.000.000\n' +
+                '   - 1.1 Bronze: Rp1.500.000\n' +
+                '   - 1.2 Silver: Rp2.300.000\n' +
+                '   - 1.3 Gold: Rp5.000.000\n' +
                 '\n' +
                 'Mau lihat detail benefit yang mana dulu, kak?\n' +
-                'Bisa ketik Bronze, Silver, atau Gold 🙂';
+                'Bisa ketik 1.1, 1.2, atau 1.3 🙂';
         }
 
         if (containsAny(msg, ['foto video', 'foto + video', 'foto dan video', 'foto & video', 'paket foto video', 'photo video', 'photography videography'])) {
             return 'Boleh kak 🙂 Untuk paket foto + video, pilihannya ini ya:\n' +
                 '\n' +
                 '2. Photography and Videography Wedding Packages\n' +
-                '   - Bronze: Rp3.500.000\n' +
-                '   - Silver: Rp4.000.000\n' +
-                '   - Gold: Rp6.500.000\n' +
-                '   - Platinum: Rp8.000.000\n' +
+                '   - 2.1 Bronze: Rp3.500.000\n' +
+                '   - 2.2 Silver: Rp4.000.000\n' +
+                '   - 2.3 Gold: Rp6.500.000\n' +
+                '   - 2.4 Platinum: Rp8.000.000\n' +
                 '\n' +
                 'Mau lihat detail benefit yang mana dulu, kak?\n' +
-                'Bisa ketik Bronze, Silver, Gold, atau Platinum 🙂';
+                'Bisa ketik 2.1, 2.2, 2.3, atau 2.4 🙂';
         }
 
         if (containsAny(msg, ['paket complete', 'complete aja', 'complete package', 'complete packages', 'paket lengkap', 'paket komplit', 'wedding prewedding', 'prewedding wedding', 'paket prewed wedding'])) {
             return 'Boleh kak 🙂 Untuk paket Complete, ada 3 pilihan:\n' +
                 '\n' +
                 '4. Complete Photography and Videography Wedding-Prewedding\n' +
-                '   - Complete 1: Rp6.500.000\n' +
-                '   - Complete 2: Rp7.500.000\n' +
-                '   - Complete 3: Rp8.500.000\n' +
+                '   - 4.1 Complete 1: Rp6.500.000\n' +
+                '   - 4.2 Complete 2: Rp7.500.000\n' +
+                '   - 4.3 Complete 3: Rp8.500.000\n' +
                 '\n' +
-                'Mau lihat detail Complete yang mana dulu, kak?';
+                'Mau lihat detail Complete yang mana dulu, kak?\n' +
+                'Bisa ketik 4.1, 4.2, atau 4.3 🙂';
         }
 
         if (msg.indexOf('bronze') !== -1) {
@@ -385,16 +560,30 @@
                 'Mau lihat detail Complete yang mana dulu, kak?';
         }
 
-        if (containsAny(msg, ['lokasi', 'alamat', 'studio', 'di mana', 'dimana', 'maps'])) {
-            return 'Studio kami berlokasi di Jl. Gang Hiu No.10 LK. Teleng, Sidoharjo, Pacitan.\n\nArea layanan: Kab. Pacitan, Kab. Wonogiri, Kab. Trenggalek, Kab. Ponorogo.\n\nUntuk acara di luar area tersebut, silakan konsultasi langsung melalui WhatsApp ya kak.\nBiaya transportasi di luar radius 10 km dari studio dikenakan charge Rp100.000.';
+        if (containsAny(msg, ['lokasi', 'alamat', 'studio', 'di mana', 'dimana', 'maps', 'acara di', 'di kota', 'luar kota', 'luar area', 'jangkau', 'cover', 'mencakup'])) {
+            // Check if user also mentions an out-of-area city
+            if (isOutOfAreaQuery(msg)) {
+                return getOutOfAreaReply(msg);
+            }
+            return 'Studio kami berlokasi di Jl. Gang Hiu No.10 LK. Teleng, Sidoharjo, Pacitan.\n\nArea layanan utama: Kab. Pacitan, Kab. Wonogiri, Kab. Trenggalek, Kab. Ponorogo.\n\nUntuk acara di luar area tersebut, jika kakak ingin berdiskusi silahkan hubungi WhatsApp dengan menekan tombol "Chat via WhatsApp" di bawah ya kak.\nBiaya transportasi di luar radius 10 km dari studio dikenakan charge Rp100.000.';
+        }
+
+        // PRD §17.2: Out-of-area locations MUST direct to WhatsApp CTA
+        if (isOutOfAreaQuery(msg)) {
+            return getOutOfAreaReply(msg);
         }
 
         if (containsAny(msg, ['jam', 'buka', 'tutup', 'operasional', 'kerja'])) {
             return 'Jam operasional studio:\n\n- Hari kerja: Senin \u2013 Sabtu\n- Jam buka: 10.00 AM\n- Jam tutup: 09.00 PM\n- Hari libur: Minggu & tanggal merah nasional\n\nKonsultasi via WhatsApp tetap tersedia di luar jam tersebut ya kak.';
         }
 
+        // PRD §12.1-12.3 & §16.1-16.4: Booking response rules
+        // - Must NOT show bank account number
+        // - Must NOT show [nomor disembunyikan]
+        // - Must NOT show WhatsApp number
+        // - Must guide user to CTA buttons for action
         if (containsAny(msg, ['booking', 'pesan', 'cara', 'daftar', 'reservasi', 'dp', 'pembayaran', 'transfer', 'rekening'])) {
-            return 'Untuk booking, bisa melalui:\n\n1. WhatsApp Min Limpo: 0852 3232 1080\n2. Form booking di website\n\nKetentuan:\n- Booked minimal 1 bulan sebelum hari H\n- DP minimal Rp300.000\n- Pembatalan sepihak = DP hangus\n- Pelunasan maksimal 5-10 hari setelah pemotretan\n- Transfer ke SeaBank 9014 4503 3316 an. Renggi Andika Putra\n\nAda yang ingin ditanyakan lagi, kak?';
+            return 'Halo kak, terima kasih sudah bertanya 🙂 Untuk booking di Alima Photo, caranya begini ya kak:\n\n1. Booking dilakukan minimal 1 bulan sebelum hari acara.\n2. Ada DP minimum Rp300.000 untuk mengamankan tanggal.\n3. Pembayaran transfer dilakukan ke rekening yang tertera.\n4. Setelah transfer, konfirmasi via WhatsApp ya kak.\n5. Tim akan menghubungi lagi untuk konfirmasi detail acara.\n\nKalau ada yang mau ditanyakan lebih lanjut, langsung klik tombol di bawah ya kak.';
         }
 
         if (containsAny(msg, ['pengerjaan', 'berapa lama', 'kapan jadi', 'kapan selesai', 'editing', 'hasil', 'album'])) {
@@ -417,9 +606,122 @@
         return false;
     }
 
+    function containsWord(text, keywords) {
+        var lower = text.toLowerCase();
+        for (var i = 0; i < keywords.length; i++) {
+            if (lower.indexOf(keywords[i]) !== -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* ========================================
+       CONTEXTUAL CTA DETECTION
+       ======================================== */
+
+    function getCTAsForResponse(userMessage, botReply) {
+        var ctas = [];
+        if (!userMessage || !botReply) return ctas;
+
+        var userMsg = userMessage.toLowerCase().trim();
+        var botMsg = sanitizeReply(botReply).toLowerCase();
+
+        // PRD §13.3: Show Booking sekarang if booking intent detected
+        var hasBooking = containsWord(userMsg, [
+            'booking', 'book', 'reservasi', 'reserve',
+            'appointment', 'buat janji', 'buat jadwal',
+            'mau booking', 'mau reservasi', 'mau pesan',
+            'saya mau booking', 'ingin booking', 'ingin reservasi',
+            'lanjut booking', 'proses booking'
+        ]) || containsWord(botMsg, [
+            'booking sekarang', 'booking disini', 'halaman booking',
+            'tombol booking', 'klik tombol booking', 'lanjut ke halaman booking'
+        ]);
+
+        // PRD §13.3: Show Chat via WhatsApp if consult/admin/follow-up intent detected
+        var hasWA = containsWord(userMsg, [
+            'whatsapp', 'wa ', 'chat wa', 'ke wa',
+            'admin', 'customer service', 'cs ',
+            'hubungkan ke', 'hubungi', 'chat langsung',
+            'konsultasi', 'tanya langsung', 'bicara tim',
+            'follow up', 'lanjut wa', 'via wa',
+            'nego', 'diskon', 'murah', 'promo', 'bonus',
+            'gear', 'kamera', 'lensa', 'lighting', 'drone',
+            'audio', 'alat', 'equipment', 'sony',
+            'canon', 'fuji', 'mic', 'stabilizer'
+        ]) || containsWord(botMsg, [
+            'chat via whatsapp', 'chat whatsapp', 'tombol chat',
+            'klik tombol chat', 'konsultasi langsung',
+            'konsultasi lanjut', 'via whatsapp', 'chat min limpo',
+            'whatsapp', 'lewat whatsapp'
+        ]);
+
+        if (isGearQuestion(userMessage)) {
+            hasWA = true;
+        }
+
+        // PRD §17.2 & §10.6: Out-of-area locations MUST trigger WhatsApp CTA
+        var isOutOfArea = containsWord(userMsg, [
+            'solo', 'surabaya', 'jakarta', 'semarang', 'jogja', 'yogyakarta',
+            'malang', 'bandung', 'bali', 'medan', 'makassar', 'denpasar',
+            'luar jawa', 'luar pulau', 'luar kota', 'luar area'
+        ]) || containsWord(botMsg, [
+            'belum termasuk area layanan utama',
+            'di luar area',
+            'di luar cakupan utama'
+        ]);
+        if (isOutOfArea) {
+            hasWA = true;
+        }
+
+        // PRD §13.4: Order — Booking sekarang first, then Chat via WhatsApp
+        if (hasBooking) {
+            ctas.push({ label: 'Booking sekarang', url: 'formbooking.html', type: 'cta-booking' });
+        }
+
+        if (hasWA) {
+            ctas.push({ label: 'Chat via WhatsApp', url: 'contact.html', type: 'cta-wa' });
+        }
+
+        return ctas;
+    }
+
     /* ========================================
        API REQUEST
        ======================================== */
+
+    function validateBackendResponse(data) {
+        if (!data || typeof data !== 'object') {
+            log('warn', 'Backend response is not an object');
+            return null;
+        }
+        if (typeof data.reply !== 'string' || data.reply.length === 0) {
+            log('warn', 'Backend response missing valid reply field');
+            return null;
+        }
+        var result = { reply: data.reply, chatState: data.chatState || null, cta: null };
+        if (data.cta && typeof data.cta === 'object') {
+            result.cta = {
+                show_whatsapp: data.cta.show_whatsapp === true,
+                show_booking: data.cta.show_booking === true
+            };
+        }
+        return result;
+    }
+
+    function buildCTAsFromBackend(ctaConfig) {
+        var ctas = [];
+        if (!ctaConfig) return ctas;
+        // PRD §13.4: Order — Booking sekarang first, then Chat via WhatsApp
+        if (ctaConfig.show_booking === true) {
+            ctas.push({ label: 'Booking sekarang', url: 'formbooking.html', type: 'cta-booking' });
+        }
+        if (ctaConfig.show_whatsapp === true) {
+            ctas.push({ label: 'Chat via WhatsApp', url: 'contact.html', type: 'cta-wa' });
+        }
+        return ctas;
+    }
 
     function sendToBackend(message) {
         log('info', 'Sending to backend: ' + BACKEND_URL);
@@ -467,14 +769,52 @@
         var useBackend = BACKEND_URL && BACKEND_URL.length > 0;
 
         if (useBackend) {
-            sendToBackend(trimmed).then(function (data) {
-                var reply = data.reply || 'Maaf, terjadi kendala saat memproses pertanyaan Anda.';
-                appendMessage('bot', reply);
-                updateChatState(data.chatState);
+            sendToBackend(trimmed).then(function (rawData) {
+                var validated = validateBackendResponse(rawData);
+                if (!validated) {
+                    log('warn', 'Backend response schema invalid, using fallback');
+                    runDummyFallback(trimmed);
+                    return;
+                }
+                var reply = sanitizeReply(validated.reply);
+
+                // PRD §17.2: Post-process out-of-area replies from backend
+                reply = postProcessOutOfAreaReply(trimmed, reply);
+                
+                // PRD: Override unlimited files hallucination
+                reply = postProcessUnlimitedReply(trimmed, reply);
+
+                var ctas;
+                if (validated.cta) {
+                    ctas = buildCTAsFromBackend(validated.cta);
+                    log('info', 'Using backend cta config: wa=' + validated.cta.show_whatsapp + ' booking=' + validated.cta.show_booking);
+                } else {
+                    ctas = getCTAsForResponse(trimmed, reply);
+                }
+
+                // PRD §17.2: Force WhatsApp CTA for out-of-area queries
+                if (isOutOfAreaQuery(trimmed)) {
+                    var hasWaCta = false;
+                    for (var ci = 0; ci < ctas.length; ci++) {
+                        if (ctas[ci].type === 'cta-wa') { hasWaCta = true; break; }
+                    }
+                    if (!hasWaCta) {
+                        ctas.push({ label: 'Chat via WhatsApp', url: 'contact.html', type: 'cta-wa' });
+                    }
+                }
+
+                appendMessage('bot', reply, ctas);
+                updateChatState(validated.chatState);
                 log('info', 'Backend response rendered');
                 setUIState('idle');
             }).catch(function (err) {
-                log('warn', 'Backend failed, falling back: ' + (err && err.message ? err.message : 'unknown'));
+                var errMsg = err && err.message ? err.message : 'unknown';
+                var isCORS = err instanceof TypeError || errMsg.indexOf('Failed to fetch') !== -1 || errMsg.indexOf('NetworkError') !== -1;
+                if (isCORS) {
+                    log('error', 'CORS/network error — origin mismatch or blocked: ' + errMsg);
+                } else {
+                    log('error', 'Backend fetch failed: ' + errMsg);
+                }
                 runDummyFallback(trimmed);
             });
         } else {
@@ -487,22 +827,41 @@
 
     function runDummyFallback(trimmed) {
         setTimeout(function () {
-            var cleanMsg = trimmed.replace(/\b(dong|deh|ya|kak|min|nih)\b/gi, '').replace(/\s+/g, ' ').trim();
+            var cleanMsg = trimmed.replace(/\b(dong|deh|ya|kak|nih)\b/gi, '').replace(/\s+/g, ' ').trim();
 
-            var isNumericOption = /^\d+$/.test(cleanMsg) || /(?:nomor|no|yang|pilih|pilihan)?\s*\d+/i.test(cleanMsg) || /\b(pertama|kedua|ketiga|keempat)\b/i.test(cleanMsg);
-            if (isNumericOption && chatState.lastOptions && chatState.lastOptions.length > 0) {
+            var isNumericOption = /^\d+(\.\d+)?$/.test(cleanMsg) || /(?:nomor|no|yang|pilih|pilihan)?\s*\d+(\.\d+)?/i.test(cleanMsg) || /\b(pertama|kedua|ketiga|keempat)\b/i.test(cleanMsg);
+            if (isNumericOption) {
                 var selectedNum = null;
                 if (/\bpertama\b/i.test(cleanMsg)) selectedNum = '1';
                 else if (/\bkedua\b/i.test(cleanMsg)) selectedNum = '2';
                 else if (/\bketiga\b/i.test(cleanMsg)) selectedNum = '3';
                 else if (/\bkeempat\b/i.test(cleanMsg)) selectedNum = '4';
                 else {
-                    var match = cleanMsg.match(/(?:nomor|no|yang|pilih|pilihan)?\s*(\d+)/i);
+                    var match = cleanMsg.match(/(?:nomor|no|yang|pilih|pilihan)?\s*(\d+(\.\d+)?)/i);
                     if (match) selectedNum = match[1];
-                    else if (/^\d+$/.test(cleanMsg)) selectedNum = cleanMsg;
+                    else if (/^\d+(\.\d+)?$/.test(cleanMsg)) selectedNum = cleanMsg;
                 }
 
                 if (selectedNum) {
+                    if (selectedNum.indexOf('.') !== -1) {
+                        var pkgIdMap = {
+                            '1.1': 'photo_bronze', '1.2': 'photo_silver', '1.3': 'photo_gold',
+                            '2.1': 'photo_video_bronze', '2.2': 'photo_video_silver', '2.3': 'photo_video_gold', '2.4': 'photo_video_platinum',
+                            '3.1': 'bahagia',
+                            '4.1': 'complete_1', '4.2': 'complete_2', '4.3': 'complete_3'
+                        };
+                        var directPkgId = pkgIdMap[selectedNum];
+                        if (directPkgId) {
+                            var directReply = getTierBenefitDummy(directPkgId);
+                            appendMessage('bot', directReply);
+                            chatState.lastQuestionType = null;
+                            chatState.selectedPackage = directPkgId;
+                            setUIState('idle');
+                            return;
+                        }
+                    }
+
+                    if (chatState.lastOptions && chatState.lastOptions.length > 0) {
                     var idx = parseInt(selectedNum, 10) - 1;
                     if (idx >= 0 && idx < chatState.lastOptions.length) {
                         var selected = chatState.lastOptions[idx];
@@ -534,6 +893,7 @@
                             }
                         }
                     }
+                    } // closes: if (chatState.lastOptions ...)
                 }
             }
 
@@ -568,7 +928,8 @@
             }
 
             var reply = getDummyResponse(trimmed);
-            appendMessage('bot', reply);
+            var ctas = getCTAsForResponse(trimmed, reply);
+            appendMessage('bot', reply, ctas);
 
             if (trimmed === 'semua pricelist' || /^semua pricelist$/i.test(trimmed)) {
                 chatState = {
@@ -709,45 +1070,46 @@
             return 'Boleh kak 🙂 Untuk ' + label + ', pilihannya ini ya:\n' +
                 '\n' +
                 '1. Photography Wedding Packages\n' +
-                '   - Bronze: Rp1.500.000\n' +
-                '   - Silver: Rp2.300.000\n' +
-                '   - Gold: Rp5.000.000\n' +
+                '   - 1.1 Bronze: Rp1.500.000\n' +
+                '   - 1.2 Silver: Rp2.300.000\n' +
+                '   - 1.3 Gold: Rp5.000.000\n' +
                 '\n' +
                 'Mau lihat detail benefit yang mana dulu, kak?\n' +
-                'Bisa ketik Bronze, Silver, atau Gold 🙂';
+                'Bisa ketik 1.1, 1.2, atau 1.3 🙂';
         }
         if (categoryId === 'photo_video') {
             return 'Boleh kak 🙂 Untuk ' + label + ', pilihannya ini ya:\n' +
                 '\n' +
                 '2. Photography and Videography Wedding Packages\n' +
-                '   - Bronze: Rp3.500.000\n' +
-                '   - Silver: Rp4.000.000\n' +
-                '   - Gold: Rp6.500.000\n' +
-                '   - Platinum: Rp8.000.000\n' +
+                '   - 2.1 Bronze: Rp3.500.000\n' +
+                '   - 2.2 Silver: Rp4.000.000\n' +
+                '   - 2.3 Gold: Rp6.500.000\n' +
+                '   - 2.4 Platinum: Rp8.000.000\n' +
                 '\n' +
                 'Mau lihat detail benefit yang mana dulu, kak?\n' +
-                'Bisa ketik Bronze, Silver, Gold, atau Platinum 🙂';
+                'Bisa ketik 2.1, 2.2, 2.3, atau 2.4 🙂';
         }
         if (categoryId === 'bahagia') {
             return 'Boleh kak 🙂 Untuk ' + label + ':\n' +
                 '\n' +
                 '3. Bahagia Package\n' +
-                '   - Bahagia: Rp3.000.000\n' +
+                '   - 3.1 Bahagia: Rp3.000.000\n' +
                 '\n' +
-                'Mau saya jelaskan layanan dan benefitnya, kak? 🙂';
+                'Mau saya jelaskan layanan dan benefitnya, kak? 🙂\n' +
+                'Bisa ketik 3.1 untuk melihat detailnya.';
         }
         if (categoryId === 'complete') {
             return 'Boleh kak 🙂 Untuk paket Complete, ada 3 pilihan:\n' +
                 '\n' +
                 '4. Complete Photography and Videography Wedding-Prewedding\n' +
-                '   - Complete 1: Rp6.500.000\n' +
-                '   - Complete 2: Rp7.500.000\n' +
-                '   - Complete 3: Rp8.500.000\n' +
+                '   - 4.1 Complete 1: Rp6.500.000\n' +
+                '   - 4.2 Complete 2: Rp7.500.000\n' +
+                '   - 4.3 Complete 3: Rp8.500.000\n' +
                 '\n' +
                 'Mau lihat detail Complete yang mana dulu, kak?\n' +
-                'Bisa ketik Complete 1, Complete 2, Complete 3, atau nomor 4.1, 4.2, 4.3 🙂';
+                'Bisa ketik 4.1, 4.2, atau 4.3 🙂';
         }
-        return 'Kategori tidak dikenal. Silakan ketik nomor 1-4 🙂';
+        return 'Kategori tidak dikenal. Silakan ketik nomor 1-4 atau sub-nomor 🙂';
     }
 
     /* ========================================

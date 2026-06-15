@@ -49,7 +49,7 @@
 /* Chat Container */
 .chat-container {
     background-color: var(--clr-surface);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     overflow: hidden;
     display: flex;
@@ -63,7 +63,7 @@
     gap: 0.75rem;
     padding: 1rem 1.25rem;
     background-color: var(--clr-elevated);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .chat-header-icon {
@@ -117,7 +117,12 @@
     border-radius: 4px;
 }
 
-/* Message Bubbles */
+/* =========================================
+   Message Bubbles
+   PRD §13.1: assistant-message-block structure
+   - assistant-bubble-row -> bubble
+   - assistant-cta-row -> cta-container (BELOW bubble, NEVER beside)
+   ========================================= */
 .message {
     display: flex;
     animation: messageIn 0.3s ease forwards;
@@ -134,8 +139,11 @@
     }
 }
 
+/* PRD §10.1: CTA must be BELOW bubble, not beside.
+   flex-direction: column ensures vertical stacking. */
 .message-bot {
-    justify-content: flex-start;
+    flex-direction: column !important;
+    align-items: flex-start !important;
 }
 
 .message-user {
@@ -152,10 +160,11 @@
     overflow-wrap: break-word;
 }
 
+/* PRD §15.1: Border bubble assistant MUST be visible on desktop */
 .message-bot .message-bubble {
     background-color: var(--clr-elevated);
     color: var(--clr-secondary);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-bottom-left-radius: 4px;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -167,6 +176,78 @@
     background-color: var(--clr-accent);
     color: #111111;
     border-bottom-right-radius: 4px;
+}
+
+/* =========================================
+   Inline CTA Buttons (below bot bubble)
+   PRD §13.1 & §14.2: CTA container is a SEPARATE row
+   below the bubble, never inside or beside the bubble.
+   ========================================= */
+.chat-cta-inline {
+    margin-top: 0.5rem;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-width: 80%;
+    /* PRD §14.4: CTA follows assistant alignment area */
+    align-items: flex-start;
+}
+
+/* PRD §18.6: Empty CTA container must not render */
+.chat-cta-inline:empty {
+    display: none !important;
+}
+
+.chat-cta-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-family: var(--font-primary);
+    font-size: 0.8rem;
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* PRD §15.1: Border tombol Booking sekarang MUST be visible on desktop */
+.chat-cta-btn.cta-booking {
+    background-color: var(--clr-accent);
+    color: #111111;
+    border: 1px solid var(--clr-accent);
+}
+
+.chat-cta-btn.cta-booking:hover {
+    background-color: var(--clr-accent-hover);
+    border-color: var(--clr-accent-hover);
+}
+
+/* PRD §15.4: hover/focus must NOT remove border */
+.chat-cta-btn.cta-booking:focus {
+    border-color: var(--clr-accent);
+    outline: 2px solid rgba(213, 175, 54, 0.4);
+    outline-offset: 2px;
+}
+
+/* PRD §15.1: Border tombol Chat via WhatsApp MUST be visible on desktop */
+.chat-cta-btn.cta-wa {
+    background-color: transparent;
+    color: var(--clr-accent);
+    border: 1px solid var(--clr-accent);
+}
+
+.chat-cta-btn.cta-wa:hover {
+    background-color: rgba(213, 175, 54, 0.1);
+    border-color: var(--clr-accent-hover);
+}
+
+/* PRD §15.4: hover/focus must NOT remove border */
+.chat-cta-btn.cta-wa:focus {
+    border-color: var(--clr-accent);
+    outline: 2px solid rgba(213, 175, 54, 0.4);
+    outline-offset: 2px;
 }
 
 /* Loading Indicator */
@@ -323,7 +404,7 @@
     background-color: rgba(213, 175, 54, 0.3);
 }
 
-/* CTA Section */
+/* CTA Section (static, below chat container) */
 .chat-cta {
     text-align: center;
     padding: 2rem 1.25rem 0;
@@ -402,5 +483,14 @@
     .chat-cta-buttons .btn-primary {
         width: 100%;
         text-align: center;
+    }
+
+    /* PRD §14.6: Mobile — two CTA buttons may stack vertically */
+    .chat-cta-inline {
+        flex-direction: column;
+    }
+
+    .chat-cta-btn {
+        width: 100%;
     }
 }
