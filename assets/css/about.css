@@ -186,6 +186,11 @@
     text-decoration: none;
 }
 
+.social-link .bi {
+    font-size: 1.15em;
+    transform: translateY(-0.5px);
+}
+
 .social-link:hover {
     background: #D5AF36;
     color: #111;
