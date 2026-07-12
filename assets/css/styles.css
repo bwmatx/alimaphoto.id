@@ -317,6 +317,7 @@ ul {
     height: 100%;
     z-index: -1;
     transform-origin: center center; /* For GSAP Scale */
+    will-change: transform;
 }
 
 .hero-slides {

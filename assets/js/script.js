@@ -79,35 +79,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================
-    // 3. Horizontal Strip Carousel (Swiper.js)
+    // 3. Horizontal Strip Carousel (Native Marquee)
     // =========================================
-    const horizontalSwiperContainer = document.querySelector('.horizontal-swiper');
-    if (horizontalSwiperContainer && typeof Swiper !== 'undefined') {
-        const horizontalSwiper = new Swiper('.horizontal-swiper', {
-            direction: 'horizontal',
-            slidesPerView: 'auto',
-            spaceBetween: 40,
-            loop: true,
-            autoplay: {
-                delay: 0, 
-                disableOnInteraction: false,
-            },
-            speed: 4000, // Smooth continuous scroll effect
-            grabCursor: true,
-            freeMode: true,
-            mousewheel: {
-                forceToAxis: true,
-            },
+    function initRecentProjectsMarquee() {
+        const container = document.querySelector('.recent-projects-native-container');
+        const track = document.getElementById('recent-projects-track');
+        
+        if (!container || !track) return;
+
+        const originalCards = Array.from(track.querySelectorAll('.project-card'));
+        if (originalCards.length === 0) return;
+
+        // Clone cards for infinite loop
+        originalCards.forEach(card => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            track.appendChild(clone);
         });
 
-        // Pause autoplay on hover for better UX
-        horizontalSwiperContainer.addEventListener('mouseenter', () => {
-            horizontalSwiper.autoplay.stop();
+        function setupAnimation() {
+            let cardWidth = originalCards[0].offsetWidth;
+            if (cardWidth === 0) cardWidth = 350; 
+            
+            const gap = 40; 
+            const totalSetWidth = (cardWidth * originalCards.length) + (gap * originalCards.length);
+            
+            let styleTag = document.getElementById('recent-projects-marquee-style');
+            if (!styleTag) {
+                styleTag = document.createElement('style');
+                styleTag.id = 'recent-projects-marquee-style';
+                document.head.appendChild(styleTag);
+            }
+            
+            const duration = 40; 
+            
+            styleTag.innerHTML = `
+                @keyframes recent-projects-scroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-${totalSetWidth}px); }
+                }
+                .recent-projects-marquee-track {
+                    animation: recent-projects-scroll ${duration}s linear infinite;
+                    display: flex;
+                    gap: ${gap}px;
+                    width: max-content;
+                }
+            `;
+        }
+
+        setTimeout(setupAnimation, 100);
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(setupAnimation, 150);
         });
-        horizontalSwiperContainer.addEventListener('mouseleave', () => {
-            horizontalSwiper.autoplay.start();
-        });
+        // Pause animation when scrolling for GPU efficiency, resume when stopped
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            track.style.animationPlayState = 'paused';
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                track.style.animationPlayState = 'running';
+            }, 150);
+        }, { passive: true });
     }
+    initRecentProjectsMarquee();
 
     // =========================================
     // 4. GSAP & ScrollTrigger Animations
@@ -123,32 +160,18 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Hero Background Cinematic Zoom on Scroll
-    // On mobile: disable scrub (expensive continuous GPU calculation)
-    // On desktop: keep original scrub behavior
+    // Disabled scrub on both desktop and mobile to prevent heavy scroll jank
     const heroBgContainer = document.getElementById('hero-bg-container');
     if(heroBgContainer) {
-        if (isMobile) {
-            // Simple scale, no continuous scrub — much lighter on GPU
-            gsap.to(heroBgContainer, {
-                scale: 1.08,
-                scrollTrigger: {
-                    trigger: ".hero",
-                    start: "top top",
-                    end: "bottom top",
-                    toggleActions: "play none none reverse"
-                }
-            });
-        } else {
-            gsap.to(heroBgContainer, {
-                scale: 1.2, // Zoom in progressive
-                scrollTrigger: {
-                    trigger: ".hero",
-                    start: "top top",
-                    end: "bottom top",
-                    scrub: 1 // Smooth scrubbing — desktop only
-                }
-            });
-        }
+        gsap.to(heroBgContainer, {
+            scale: 1.08,
+            scrollTrigger: {
+                trigger: heroBgContainer.parentElement,
+                start: "top top",
+                end: "bottom top",
+                toggleActions: "play none none reverse"
+            }
+        });
     }
 
     // General Fade Up Animation
@@ -234,10 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { threshold: 0.1 });
 
         // Observe each carousel container
-        const horizontalEl = document.querySelector('.horizontal-swiper');
         const testimonialsEl = document.querySelector('.testimonials-swiper');
 
-        if (horizontalEl) carouselObserver.observe(horizontalEl);
         if (testimonialsEl) carouselObserver.observe(testimonialsEl);
     }
 
