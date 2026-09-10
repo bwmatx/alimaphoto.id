@@ -2,5 +2,10 @@
 bug.md
 .env
 node_modules
+GAS/
 PRD_BACKEND/
 PRD/
+backup/
+assets/pricelist
+old_formbooking/
+form-booking-prd.md

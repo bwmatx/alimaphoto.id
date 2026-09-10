@@ -56,7 +56,7 @@
         </div>
     </section>
 
-    <!-- SECTION 2: BOOKING FORM (LEGACY - PRESERVED FROM old_formbooking/alima.html) -->
+    <!-- SECTION 2: BOOKING FORM -->
     <section class="booking-form-section section-padding">
         <div class="container">
             <div class="row">
@@ -127,21 +127,11 @@
                                 <div class="mb-3">
                                     <label class="form-label">Pilih Tanggal Acara <span
                                             class="text-danger">*</span></label>
-                                    <div class="date-display" id="dateDisplay" onclick="openDatePicker()">
-                                        <div class="date-display-content">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" class="calendar-icon">
-                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                                            </svg>
-                                            <span id="selectedDateText">Klik untuk memilih tanggal</span>
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" id="datePickerFlatpickr"
+                                        placeholder="Klik untuk memilih tanggal" readonly required>
                                     <input type="hidden" id="tanggal" required>
                                     <input type="hidden" id="bulan" required>
+                                    <input type="hidden" id="tahun" required>
                                 </div>
                             </div>
                         </div>
@@ -421,11 +411,11 @@
                                     <label for="buktiTransfer" class="form-label">Bukti Transfer <span
                                             class="text-danger">*</span></label>
                                     <input type="file" class="form-control" id="buktiTransfer"
-                                        accept="image/*,application/pdf,.doc,.docx" required
+                                        accept="image/*,application/pdf" required
                                         onchange="handleFileSelect(event)">
-                                    <div class="form-text">Upload file: PDF, JPG, atau PNG. Maks 5 MB.</div>
+                                    <div class="form-text">Upload file: PDF, JPG, atau PNG. Maks 5 MB. File asli tanpa kompresi.</div>
 
-                                    <!-- ✅ File Preview Container -->
+                                    <!-- File Preview Container -->
                                     <div id="filePreviewContainer" class="file-preview-container">
                                         <div class="file-preview-content">
                                             <div class="file-info">
@@ -454,7 +444,16 @@
                                         </div>
                                     </div>
 
-                                    <div id="uploadStatus" class="mt-2"></div>
+                                    <!-- Upload Progress Bar (inline, bukan modal) -->
+                                    <div id="uploadProgressContainer" class="upload-progress-container" style="display: none;">
+                                        <div class="upload-progress-text">Mengupload bukti transfer...</div>
+                                        <div class="upload-progress-bar">
+                                            <div class="upload-progress-fill" id="uploadProgressFill"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Upload Notification (inline, bukan modal) -->
+                                    <div id="uploadNotification" class="upload-notification" style="display: none;"></div>
                                 </div>
                             </div>
                         </div>
@@ -470,85 +469,33 @@
         </div>
     </section>
 
-    <!-- Date Picker Modal -->
-    <div id="datePickerModal" class="date-picker-overlay">
-        <div class="date-picker-content">
-            <div class="date-picker-header">
-                <h3>Pilih Tanggal & Bulan</h3>
-                <button type="button" class="date-picker-close" onclick="closeDatePicker()">×</button>
-            </div>
-
-            <div class="date-picker-body">
-                <!-- Bulan Selection -->
-                <div class="month-section">
-                    <h4 class="section-title">Pilih Bulan</h4>
-                    <div class="month-grid">
-                        <button type="button" class="month-item" data-month="januari"
-                            onclick="selectMonth('januari', 'Januari')">
-                            <span class="month-name">Januari</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="februari"
-                            onclick="selectMonth('februari', 'Februari')">
-                            <span class="month-name">Februari</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="maret"
-                            onclick="selectMonth('maret', 'Maret')">
-                            <span class="month-name">Maret</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="april"
-                            onclick="selectMonth('april', 'April')">
-                            <span class="month-name">April</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="mei" onclick="selectMonth('mei', 'Mei')">
-                            <span class="month-name">Mei</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="juni"
-                            onclick="selectMonth('juni', 'Juni')">
-                            <span class="month-name">Juni</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="juli"
-                            onclick="selectMonth('juli', 'Juli')">
-                            <span class="month-name">Juli</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="agustus"
-                            onclick="selectMonth('agustus', 'Agustus')">
-                            <span class="month-name">Agustus</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="september"
-                            onclick="selectMonth('september', 'September')">
-                            <span class="month-name">September</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="oktober"
-                            onclick="selectMonth('oktober', 'Oktober')">
-                            <span class="month-name">Oktober</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="november"
-                            onclick="selectMonth('november', 'November')">
-                            <span class="month-name">November</span>
-                        </button>
-                        <button type="button" class="month-item" data-month="desember"
-                            onclick="selectMonth('desember', 'Desember')">
-                            <span class="month-name">Desember</span>
-                        </button>
-                    </div>
+    <!-- Date Picker Modal (Centered) -->
+    <div id="datePickerModal" class="fp-modal-overlay" style="display: none;">
+        <div class="fp-modal-content">
+            <h3 class="fp-modal-title">Pilih Tanggal Acara</h3>
+            <div class="fp-dropdown-row">
+                <div class="fp-dropdown-group">
+                    <label>Tanggal</label>
+                    <select id="fpTanggal"></select>
                 </div>
-
-                <!-- Date Selection -->
-                <div class="date-section">
-                    <h4 class="section-title">Pilih Tanggal</h4>
-                    <div class="date-grid" id="dateGrid">
-                    </div>
+                <div class="fp-dropdown-group">
+                    <label>Bulan</label>
+                    <select id="fpBulan"></select>
+                </div>
+                <div class="fp-dropdown-group">
+                    <label>Tahun</label>
+                    <select id="fpTahun"></select>
                 </div>
             </div>
-
-            <div class="date-picker-footer">
-                <button type="button" class="btn-date-cancel" onclick="closeDatePicker()">Batal</button>
-                <button type="button" class="btn-date-confirm" onclick="confirmDateSelection()">Konfirmasi</button>
+            <div id="fpPreview" class="fp-preview"></div>
+            <div class="fp-modal-footer">
+                <button type="button" class="btn-date-cancel" id="fpCancel">Batal</button>
+                <button type="button" class="btn-date-confirm" id="fpConfirm">Pilih</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Pop-up (LEGACY - PRESERVED FROM old_formbooking/alima.html) -->
+    <!-- Modal Pop-up (UNTUK: "Sabar" warning & error lainnya) -->
     <div id="modalOverlay" class="modal-overlay">
         <div class="modal-content">
             <div id="modalIcon" class="modal-icon"></div>
@@ -605,11 +552,8 @@
     <!-- Custom Script (navbar, hamburger) -->
     <script src="assets/js/script.js"></script>
 
-    <!-- Legacy Booking Logic (UNTOUCHED - Google Sheets + Drive Upload) -->
-    <script src="old_formbooking/alima.js"></script>
-
-    <!-- Visual Enhancements Only (GSAP animations for this page) -->
-    <script src="assets/js/formbooking.js"></script>
+    <!-- Booking Logic (modular JS) -->
+    <script type="module" src="assets/js/formbooking/init.js"></script>
 </body>
 
 </html>
