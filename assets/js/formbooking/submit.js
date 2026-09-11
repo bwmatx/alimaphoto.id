@@ -102,6 +102,7 @@ export function handleFormSubmit(e) {
             paket: document.querySelector('input[name="paket"]:checked')?.value || '-',
             sosmed: document.getElementById('sosmed').value,
             dpTerbilang: document.getElementById('dpTerbilang').value,
+            whatsapp: document.getElementById('whatsapp').value,
             fileName: file.name,
             fileData: base64Data,
             mimeType: file.type

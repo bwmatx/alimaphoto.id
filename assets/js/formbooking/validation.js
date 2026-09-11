@@ -5,19 +5,43 @@
 export function validateForm() {
     const incompleteFields = [];
 
-    const textInputs = ['namaCpp', 'namaTuanRumah', 'alamat', 'sosmed', 'dpTerbilang'];
+    const textInputs = ['namaCpp', 'namaTuanRumah', 'alamat', 'sosmed', 'dpTerbilang', 'whatsapp'];
     textInputs.forEach(fieldId => {
         const field = document.getElementById(fieldId);
-        if (!field.value.trim()) {
+        if (!field || !field.value.trim()) {
+            if (!field) return;
             incompleteFields.push({
                 id: fieldId,
-                label: field.previousElementSibling.textContent.replace(' *', '')
+                label: field.previousElementSibling ? field.previousElementSibling.textContent.replace(' *', '') : fieldId
             });
             field.classList.add('field-incomplete');
         } else {
             field.classList.remove('field-incomplete');
         }
     });
+
+    // Validasi format Nomor WhatsApp (longgar di frontend, normalisasi final di Code.gs)
+    // Menerima: 08xx, 62xx, +62xx dengan spasi/strip/titik. Minimal 9 digit, maksimal 15 digit.
+    const waField = document.getElementById('whatsapp');
+    if (waField && waField.value.trim()) {
+        const digitsOnly = waField.value.replace(/\D/g, '');
+        let normalized = digitsOnly;
+        if (normalized.startsWith('0')) {
+            normalized = '62' + normalized.slice(1);
+        } else if (normalized.startsWith('62')) {
+            normalized = normalized;
+        } else {
+            normalized = '';
+        }
+        const waValid = normalized && /^62\d{8,13}$/.test(normalized);
+        if (!waValid) {
+            incompleteFields.push({
+                id: 'whatsapp',
+                label: 'Nomor WhatsApp'
+            });
+            waField.classList.add('field-incomplete');
+        }
+    }
 
     const selects = ['tanggal', 'bulan', 'tahun'];
     selects.forEach(fieldId => {
