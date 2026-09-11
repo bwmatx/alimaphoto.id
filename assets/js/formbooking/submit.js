@@ -8,7 +8,7 @@ import { getIsUploading, showUploadProgress, completeUploadProgress, showUploadE
 import { resetDatepicker } from './datepicker.js';
 import { removeFile } from './upload.js';
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCPZ3I4RHLAT0WlC335_lxbYcLaA0s4MXBB3oc2sIHkKu86_l33hm8SpQt9mdRmnLE/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzu0J58gFMf3Mw88qvQTlJPe59T1p6blYKMoZVFtGrF7neoM25OaOwIuolnoEf3MuI/exec';
 
 export function handleFormSubmit(e) {
     e.preventDefault();
