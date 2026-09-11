@@ -116,7 +116,15 @@ export function handleFormSubmit(e) {
                 body: JSON.stringify(formData)
             });
 
-            const result = await response.json();
+            // §15 — jangan parse buta: deployment basi/salah mengembalikan HTML,
+            // bukan JSON. Baca sebagai teks dulu agar pesannya diagnostik.
+            const rawText = await response.text();
+            let result;
+            try {
+                result = JSON.parse(rawText);
+            } catch (parseErr) {
+                throw new Error('Server mengembalikan respons non-JSON (kemungkinan deployment GAS kedaluwarsa atau URL salah).');
+            }
 
             if (result.success) {
                 completeUploadProgress();
