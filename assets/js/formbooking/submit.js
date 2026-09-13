@@ -8,7 +8,7 @@ import { getIsUploading, showUploadProgress, completeUploadProgress, showUploadE
 import { resetDatepicker } from './datepicker.js';
 import { removeFile } from './upload.js';
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzu0J58gFMf3Mw88qvQTlJPe59T1p6blYKMoZVFtGrF7neoM25OaOwIuolnoEf3MuI/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbztIk9Zaam4xuii0iTZtBV4gAWIy42xCK-84AWsAZjeV9Ln3SRo09b7uBZ2Y3rszyUL/exec';
 
 export function handleFormSubmit(e) {
     e.preventDefault();
@@ -119,10 +119,18 @@ export function handleFormSubmit(e) {
             // §15 — jangan parse buta: deployment basi/salah mengembalikan HTML,
             // bukan JSON. Baca sebagai teks dulu agar pesannya diagnostik.
             const rawText = await response.text();
+
+            // DEBUG — hapus setelah diagnosa selesai
+            console.log('[DEBUG] response.status:', response.status);
+            console.log('[DEBUG] response.url:', response.url);
+            console.log('[DEBUG] response.redirected:', response.redirected);
+            console.log('[DEBUG] rawText (200 char pertama):', rawText.substring(0, 200));
+
             let result;
             try {
                 result = JSON.parse(rawText);
             } catch (parseErr) {
+                console.error('[DEBUG] JSON.parse gagal. rawText lengkap:', rawText);
                 throw new Error('Server mengembalikan respons non-JSON (kemungkinan deployment GAS kedaluwarsa atau URL salah).');
             }
 
