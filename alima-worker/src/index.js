@@ -1150,8 +1150,8 @@ function isRateLimited(ip) {
    ======================================== */
 
 var ALLOWED_ORIGINS = [
-    'https://alima.adhiwibowo.space',
-    'https://adhiwibowo.space',
+    'https://alima.adhiwibowo.my.id',
+    'https://adhiwibowo.my.id',
     'https://bwmatx.github.io',
     'http://127.0.0.1:5500',
     'http://localhost:5500',
